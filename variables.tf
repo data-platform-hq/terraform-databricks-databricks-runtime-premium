@@ -8,7 +8,6 @@ variable "project" {
   description = "Project name"
 }
 
-# Optional
 variable "user_object_ids" {
   type        = map(string)
   description = "Map of AD usernames and corresponding object IDs"
