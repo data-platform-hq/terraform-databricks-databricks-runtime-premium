@@ -1,5 +1,5 @@
 # Databricks Premium Workspace Terraform module
-Terraform module used for creation Databricks Premium Workspace using Databricks provider
+Terraform module used for managment of Databricks Premium Resources
 
 ## Usage
 
