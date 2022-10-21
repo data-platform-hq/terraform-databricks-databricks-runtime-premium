@@ -23,7 +23,7 @@ resource "databricks_ip_access_list" "this" {
 resource "databricks_sql_endpoint" "this" {
   for_each = var.sql_endpoint
 
-  name                      = "${each.key}-${var.env}"
+  name                      = "${each.key}-${var.project}-${var.env}"
   cluster_size              = lookup(each.value, "cluster_size", var.default_values_sql_endpoint["cluster_size"])
   min_num_clusters          = lookup(each.value, "min_num_clusters", var.default_values_sql_endpoint["min_num_clusters"])
   max_num_clusters          = lookup(each.value, "max_num_clusters", var.default_values_sql_endpoint["max_num_clusters"])

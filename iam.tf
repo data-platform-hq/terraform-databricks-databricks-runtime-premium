@@ -62,7 +62,7 @@ resource "databricks_group_member" "service_principals" {
 }
 
 resource "databricks_permissions" "sql_endpoint" {
-  for_each = { for entry in databricks_sql_endpoint.this : "${entry.name}" => "${entry.id}" }
+  for_each = { for entry in databricks_sql_endpoint.this : (entry.name) => (entry.id) }
 
   sql_endpoint_id = each.value
 

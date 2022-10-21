@@ -8,16 +8,6 @@ variable "project" {
   description = "Project name"
 }
 
-variable "workspace_id" {
-  type        = string
-  description = "Id of Databricks workspace"
-}
-
-variable "sku" {
-  type        = string
-  description = "The sku to use for the Databricks Workspace: [standard|premium|trial]"
-}
-
 # Optional
 variable "user_object_ids" {
   type        = map(string)
