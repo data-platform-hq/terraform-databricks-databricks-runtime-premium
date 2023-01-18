@@ -14,32 +14,21 @@ variable "user_object_ids" {
   default     = {}
 }
 
-variable "workspace_admins" {
-  type = object({
-    user              = list(string)
-    service_principal = list(string)
-  })
-  description = "Provide users or service principals to grant them Admin permissions."
-  default = {
-    user              = null
-    service_principal = null
-  }
-}
-
 variable "iam" {
   type = map(object({
-    user              = optional(list(string))
-    service_principal = optional(list(string))
-    entitlements      = optional(list(string))
+    user              = list(string)
+    service_principal = list(string)
   }))
-  description = "Map of group name and its parameters, such as users and service principals whom are added to the group. Also group entitlements."
-  default     = {}
-
-  validation {
-    condition = contains(values(var.iam), "entitlements") ? alltrue([
-      for item in toset(flatten([for group, params in var.iam : params.entitlements])) : contains(["allow_cluster_create", "allow_instance_pool_create", "databricks_sql_access"], item)
-    ]) : true
-    error_message = "Entitlements validation. The only suitable values are: databricks_sql_access, allow_instance_pool_create, allow_cluster_create"
+  description = "Map of groups and members of users and service principals to be created. You can add you own groups and members. E.g., `'group' = { user = ['user1','user2'] service_principal = ['sp1']}` and etc."
+  default = {
+    "admins" = {
+      "user"              = []
+      "service_principal" = []
+    }
+    "default" = {
+      "user"              = []
+      "service_principal" = []
+    }
   }
 }
 
