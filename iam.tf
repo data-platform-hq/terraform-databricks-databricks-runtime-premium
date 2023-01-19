@@ -21,6 +21,10 @@ locals {
   )
 }
 
+data "databricks_group" "admin" {
+  display_name = "admins"
+}
+
 resource "databricks_group" "this" {
   for_each = toset(keys(var.iam))
 
@@ -49,11 +53,11 @@ resource "databricks_service_principal" "this" {
   lifecycle { ignore_changes = [external_id, allow_cluster_create, allow_instance_pool_create, databricks_sql_access, workspace_access] }
 }
 
-resource "databricks_permission_assignment" "this" {
+resource "databricks_group_member" "admin" {
   for_each = merge(local.admin_user_map, local.admin_sp_map)
 
-  principal_id = startswith(each.key, "user") ? databricks_user.this[each.value].id : databricks_service_principal.this[each.value].id
-  permissions  = ["ADMIN"]
+  group_id  = data.databricks_group.admin.id
+  member_id = startswith(each.key, "user") ? databricks_user.this[each.value].id : databricks_service_principal.this[each.value].id
 }
 
 resource "databricks_group_member" "this" {
