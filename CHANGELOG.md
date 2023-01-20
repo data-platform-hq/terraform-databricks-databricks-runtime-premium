@@ -21,6 +21,19 @@
 
 ### Features
 
+* fix release ([35bd98d](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/35bd98d5849b1fc716e026b14e3b474a56628c02))
+* iam refactor; entitlements ([6308195](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/63081953e2c41b24bfedda2a2985d67d60dd3022))
+
+# [1.1.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.0.0...v1.1.0) (2023-01-20)
+
+
+### Bug Fixes
+
+* replaced permission_assignment with group_member ([27d38e1](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/27d38e125ec98bf8e40560dd12a37a23bfca3cec))
+
+
+### Features
+
 * iam refactor; entitlements ([6308195](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/63081953e2c41b24bfedda2a2985d67d60dd3022))
 
 # [1.1.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.0.0...v1.1.0) (2023-01-20)
