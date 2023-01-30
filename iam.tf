@@ -101,18 +101,3 @@ resource "databricks_permissions" "sql_endpoint" {
 
   depends_on = [databricks_group.this]
 }
-
-resource "databricks_permissions" "token" {
-  authorization = "tokens"
-
-  dynamic "access_control" {
-    for_each = { for entry in flatten([for resource, permissions in var.iam_permissions : [for permission, groups in permissions : [for group in groups : {
-      resource = resource, permission = permission, group = group
-    } if resource == "token"]]]) : "${entry.resource}.${entry.permission}.${entry.group}" => entry }
-    content {
-      group_name       = access_control.value.group
-      permission_level = access_control.value.permission
-    }
-  }
-  depends_on = [databricks_group.this]
-}
