@@ -13,11 +13,6 @@ variable "location" {
   description = "Azure location"
 }
 
-variable "sku" {
-  type        = string
-  description = "The sku to use for the Databricks Workspace: [standard|premium|trial]"
-}
-
 variable "workspace_id" {
   type        = string
   description = "Id of Azure Databricks workspace"
