@@ -1,11 +1,21 @@
+variable "project" {
+  type        = string
+  description = "Project name"
+}
+
 variable "env" {
   type        = string
   description = "Environment name"
 }
 
-variable "project" {
+variable "location" {
   type        = string
-  description = "Project name"
+  description = "Azure location"
+}
+
+variable "workspace_id" {
+  type        = string
+  description = "Id of Azure Databricks workspace"
 }
 
 variable "user_object_ids" {
@@ -19,7 +29,7 @@ variable "workspace_admins" {
     user              = list(string)
     service_principal = list(string)
   })
-  description = "Provide users or service principals to grant them Admin permissions."
+  description = "Provide users or service principals to grant them Admin permissions in Workspace."
   default = {
     user              = null
     service_principal = null
@@ -54,10 +64,6 @@ variable "iam_permissions" {
       "CAN_USE"    = ["default"]
       "CAN_MANAGE" = []
     }
-    "token" = {
-      "CAN_USE"    = ["default"]
-      "CAN_MANAGE" = []
-    }
   }
 }
 
@@ -68,7 +74,14 @@ variable "ip_rules" {
 }
 
 variable "sql_endpoint" {
-  type        = map(map(string))
+  type = map(object({
+    cluster_size              = string
+    min_num_clusters          = optional(number)
+    max_num_clusters          = optional(number)
+    auto_stop_mins            = optional(string)
+    enable_photon             = optional(bool)
+    enable_serverless_compute = optional(bool)
+  }))
   description = "Map of SQL Endoints to be deployed in Databricks Workspace"
   default     = {}
 }
@@ -90,5 +103,72 @@ variable "default_values_sql_endpoint" {
     auto_stop_mins            = "30"
     enable_photon             = false
     enable_serverless_compute = false
+  }
+}
+
+variable "create_metastore" {
+  type        = bool
+  description = "Boolean flag for Unity Catalog Metastore current in this environment. One Metastore per region"
+  default     = false
+}
+
+variable "access_connector_id" {
+  type        = string
+  description = "Databricks Access Connector Id that lets you to connect managed identities to an Azure Databricks account. Provides an ability to access Unity Catalog with assigned identity"
+  default     = ""
+}
+
+variable "storage_account_id" {
+  type        = string
+  description = "Storage Account Id where Unity Catalog Metastore would be provisioned"
+  default     = ""
+}
+variable "storage_account_name" {
+  type        = string
+  description = "Storage Account Name where Unity Catalog Metastore would be provisioned"
+  default     = ""
+}
+
+variable "catalog" {
+  type = map(object({
+    catalog_grants     = optional(map(list(string)))
+    catalog_comment    = optional(string)
+    catalog_properties = optional(map(string))
+    schema_name        = optional(list(string))
+    schema_grants      = optional(map(list(string)))
+    schema_comment     = optional(string)
+    schema_properties  = optional(map(string))
+  }))
+  description = "Map of catalog name and its parameters"
+  default     = {}
+}
+
+variable "suffix" {
+  type        = string
+  description = "Optional suffix that would be added to the end of resources names."
+  default     = ""
+}
+
+variable "external_metastore_id" {
+  type        = string
+  description = "Unity Catalog Metastore Id that is located in separate environment. Provide this value to associate Databricks Workspace with target Metastore"
+  default     = ""
+  validation {
+    condition     = length(var.external_metastore_id) == 36 || length(var.external_metastore_id) == 0
+    error_message = "UUID has to be either in nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn format or empty string"
+  }
+}
+
+variable "metastore_grants" {
+  type        = map(list(string))
+  description = "Permissions to give on metastore to group"
+  default     = {}
+  validation {
+    condition = values(var.metastore_grants) != null ? alltrue([
+      for item in toset(flatten([for group, params in var.metastore_grants : params if params != null])) : contains([
+        "CREATE_CATALOG", "CREATE_EXTERNAL_LOCATION", "CREATE_SHARE", "CREATE_RECIPIENT", "CREATE_PROVIDER"
+      ], item)
+    ]) : true
+    error_message = "Metastore permission validation. The only possible values for permissions are: CREATE_CATALOG, CREATE_EXTERNAL_LOCATION, CREATE_SHARE, CREATE_RECIPIENT, CREATE_PROVIDER"
   }
 }
