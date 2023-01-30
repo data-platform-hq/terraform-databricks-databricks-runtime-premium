@@ -1,3 +1,17 @@
+# [1.2.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.1.0...v1.2.0) (2023-01-30)
+
+
+### Bug Fixes
+
+* azurerm provider; removed sku var ([4cf3af5](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/4cf3af5122e5b7dc391a0cb797961691d663578b))
+* lint ([85f2c75](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/85f2c75f0245ae69c1147e3c9741cd5bdd6e894f))
+* removed version constraint on azurerm provider ([8738ea8](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/8738ea86f8009164459730ebde21e26c7690c8ed))
+
+
+### Features
+
+* unity catalog ([58ffa3c](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/58ffa3c93691b1de841e4f321f668410dfaee465))
+
 # [1.1.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.0.0...v1.1.0) (2023-01-20)
 
 
