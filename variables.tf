@@ -145,7 +145,7 @@ variable "catalog" {
     schema_properties  = optional(map(string))
   }))
   description = "Map of catalog name and its parameters"
-  default = {}
+  default     = {}
 }
 
 variable "suffix" {
