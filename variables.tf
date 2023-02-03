@@ -77,9 +77,9 @@ variable "iam_permissions" {
 
 # Default Cluster and Cluster Policy variables
 variable "default_cluster_id" {
-  type    = string
+  type        = string
   description = "Single value of default Cluster id created by 'databricks-runtime' module"
-  default = ""
+  default     = ""
 }
 
 variable "cluster_policies_object" {
