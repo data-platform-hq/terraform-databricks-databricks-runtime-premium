@@ -46,5 +46,3 @@ resource "databricks_permissions" "sql_endpoint" {
 
   depends_on = [databricks_group.this]
 }
-
-
