@@ -1,3 +1,17 @@
+# [1.3.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.2.0...v1.3.0) (2023-02-06)
+
+
+### Bug Fixes
+
+* changed readme.md ([3f68e8e](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/3f68e8e8eaff22d7b07bde663811441b5bcd139c))
+* fmt ([dbbce0e](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/dbbce0e0e56aeb25d566e8935e9a56d06a09202a))
+* fmt ([560fb75](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/560fb753281a97e658830a8c05c3436a6e4b4291))
+
+
+### Features
+
+* cluster and clsuter policy permission assignments ([3a65ada](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/3a65ada53382675f3bd90ce0fec0b62308301834))
+
 # [1.2.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.1.0...v1.2.0) (2023-01-30)
 
 
