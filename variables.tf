@@ -18,6 +18,13 @@ variable "workspace_id" {
   description = "Id of Azure Databricks workspace"
 }
 
+variable "ip_rules" {
+  type        = map(string)
+  description = "Map of IP addresses permitted for access to DB"
+  default     = {}
+}
+
+# Identity Access Management variables
 variable "user_object_ids" {
   type        = map(string)
   description = "Map of AD usernames and corresponding object IDs"
@@ -38,9 +45,10 @@ variable "workspace_admins" {
 
 variable "iam" {
   type = map(object({
-    user              = optional(list(string))
-    service_principal = optional(list(string))
-    entitlements      = optional(list(string))
+    user                       = optional(list(string))
+    service_principal          = optional(list(string))
+    entitlements               = optional(list(string))
+    default_cluster_permission = optional(string)
   }))
   description = "Used to create workspace group. Map of group name and its parameters, such as users and service principals added to the group. Also possible to configure group entitlements."
   default     = {}
@@ -67,12 +75,28 @@ variable "iam_permissions" {
   }
 }
 
-variable "ip_rules" {
-  type        = map(string)
-  description = "Map of IP addresses permitted for access to DB"
-  default     = {}
+# Default Cluster and Cluster Policy variables
+variable "default_cluster_id" {
+  type        = string
+  description = "Single value of default Cluster id created by 'databricks-runtime' module"
+  default     = ""
 }
 
+variable "cluster_policies_object" {
+  type = list(object({
+    id      = string
+    name    = string
+    can_use = list(string)
+  }))
+  description = "List of objects that provides an ability to grant custom workspace group a permission to use(CAN_USE) cluster policy"
+  default = [{
+    id      = null
+    name    = null
+    can_use = null
+  }]
+}
+
+# SQL Endpoint variables
 variable "sql_endpoint" {
   type = map(object({
     cluster_size              = string
@@ -106,6 +130,7 @@ variable "default_values_sql_endpoint" {
   }
 }
 
+# Unity Catalog variables
 variable "create_metastore" {
   type        = bool
   description = "Boolean flag for Unity Catalog Metastore current in this environment. One Metastore per region"

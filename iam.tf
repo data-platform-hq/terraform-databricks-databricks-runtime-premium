@@ -83,21 +83,3 @@ resource "databricks_entitlements" "this" {
 
   depends_on = [databricks_group_member.this]
 }
-
-resource "databricks_permissions" "sql_endpoint" {
-  for_each = { for entry in databricks_sql_endpoint.this : (entry.name) => (entry.id) }
-
-  sql_endpoint_id = each.value
-
-  dynamic "access_control" {
-    for_each = { for entry in flatten([for resource, permissions in var.iam_permissions : [for permission, groups in permissions : [for group in groups : {
-      resource = resource, permission = permission, group = group
-    } if resource == "sql_endpoint"]]]) : "${entry.resource}.${entry.permission}.${entry.group}" => entry }
-    content {
-      group_name       = access_control.value.group
-      permission_level = access_control.value.permission
-    }
-  }
-
-  depends_on = [databricks_group.this]
-}
