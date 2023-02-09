@@ -197,3 +197,19 @@ variable "metastore_grants" {
     error_message = "Metastore permission validation. The only possible values for permissions are: CREATE_CATALOG, CREATE_EXTERNAL_LOCATION, CREATE_SHARE, CREATE_RECIPIENT, CREATE_PROVIDER"
   }
 }
+
+# Secret Scope ACLs variables
+variable "secret_scope_object" {
+  type = list(object({
+    scope_name = string
+    acl = list(object({
+      principal  = string
+      permission = string
+    }))
+  }))
+  description = "List of objects, where 'scope_name' param is a Secret scope name and 'acl' are list of objects with 'principals' and one of allowed 'permission' ('READ', 'WRITE' or 'MANAGE')"
+  default = [{
+    scope_name = null
+    acl        = null
+  }]
+}

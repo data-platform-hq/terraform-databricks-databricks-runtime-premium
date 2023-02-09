@@ -1,3 +1,11 @@
+locals {
+  secrets_acl_objects_list = flatten([for param in var.secret_scope_object : [
+    for permission in param.acl : {
+      scope = param.scope_name, principal = permission.principal, permission = permission.permission
+    }] if param.acl != null
+  ])
+}
+
 resource "databricks_permissions" "default_cluster" {
   for_each = length(var.default_cluster_id) == 0 ? {} : {
     for k, v in var.iam : k => v.default_cluster_permission
@@ -45,4 +53,12 @@ resource "databricks_permissions" "sql_endpoint" {
   }
 
   depends_on = [databricks_group.this]
+}
+
+resource "databricks_secret_acl" "this" {
+  for_each = { for entry in local.secrets_acl_objects_list : "${entry.scope}.${entry.principal}.${entry.permission}" => entry }
+
+  scope      = each.value.scope
+  principal  = databricks_group.this[each.value.principal].display_name
+  permission = each.value.permission
 }
