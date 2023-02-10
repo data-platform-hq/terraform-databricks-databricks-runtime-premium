@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.3.0...v1.4.0) (2023-02-10)
+
+
+### Features
+
+* secret scope acls ([c8a3910](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/c8a3910ea1be835b331c350c5e385712f08abed1))
+
 # [1.3.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.2.0...v1.3.0) (2023-02-06)
 
 
