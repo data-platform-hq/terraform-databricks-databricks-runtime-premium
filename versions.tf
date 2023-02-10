@@ -8,7 +8,7 @@ terraform {
     }
     databricks = {
       source  = "databricks/databricks"
-      version = ">=1.9.0"
+      version = ">=1.9.2"
     }
   }
 }
