@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.4.0...v1.4.1) (2023-02-14)
+
+
+### Bug Fixes
+
+* fixed for loop and condition for cluster permissions ([6bc4d82](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/6bc4d8241541e315c289a85b8a3726ded41b688f))
+
 # [1.4.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.3.0...v1.4.0) (2023-02-10)
 
 
