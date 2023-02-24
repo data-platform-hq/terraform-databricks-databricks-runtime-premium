@@ -4,21 +4,17 @@ locals {
       scope = param.scope_name, principal = permission.principal, permission = permission.permission
     }] if param.acl != null
   ])
-
-  cluster_permissions_objects_list = [for k, v in var.iam : {
-    cluster_id = var.default_cluster_id, group_name = k, permission_level = v.default_cluster_permission
-    } if v.default_cluster_permission != null
-  ]
 }
 
 resource "databricks_permissions" "default_cluster" {
-  for_each = { for entry in local.cluster_permissions_objects_list : "${entry.group_name}.${entry.permission_level}" => entry }
-
-  cluster_id = each.value.cluster_id
-
-  access_control {
-    group_name       = databricks_group.this[each.value.group_name].display_name
-    permission_level = each.value.permission_level
+  for_each   = coalesce(flatten([values(var.iam)[*].default_cluster_permission, "none"])...) != "none" ? var.default_cluster_id : {}
+  cluster_id = each.value
+  dynamic "access_control" {
+    for_each = { for k, v in var.iam : k => v.default_cluster_permission if v.default_cluster_permission != null }
+    content {
+      group_name       = databricks_group.this[access_control.key].display_name
+      permission_level = access_control.value
+    }
   }
 }
 
