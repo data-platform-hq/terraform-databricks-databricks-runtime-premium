@@ -1,3 +1,11 @@
+## [1.4.2](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.4.1...v1.4.2) (2023-02-25)
+
+
+### Bug Fixes
+
+* fmt ([a0a6447](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/a0a644770ff15bd1737630974392c66ca2eb2114))
+* updated logic for databricks_permissions.default_cluster ([b85744f](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/b85744f5949174a12db367f0fc815d040e958050))
+
 ## [1.4.1](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.4.0...v1.4.1) (2023-02-14)
 
 
