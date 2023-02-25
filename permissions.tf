@@ -7,8 +7,10 @@ locals {
 }
 
 resource "databricks_permissions" "default_cluster" {
-  for_each   = coalesce(flatten([values(var.iam)[*].default_cluster_permission, "none"])...) != "none" ? var.default_cluster_id : {}
+  for_each = coalesce(flatten([values(var.iam)[*].default_cluster_permission, "none"])...) != "none" ? var.default_cluster_id : {}
+
   cluster_id = each.value
+
   dynamic "access_control" {
     for_each = { for k, v in var.iam : k => v.default_cluster_permission if v.default_cluster_permission != null }
     content {
