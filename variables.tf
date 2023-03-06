@@ -100,7 +100,7 @@ variable "sql_endpoint" {
     })))
   }))
   description = "Set of objects with parameters to configure SQL Endpoint and assign permissions to it for certain custom groups"
-  default = []
+  default     = []
 }
 
 # Unity Catalog variables

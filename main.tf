@@ -1,6 +1,11 @@
 locals {
   ip_rules = var.ip_rules == null ? null : values(var.ip_rules)
   suffix   = length(var.suffix) == 0 ? "" : "-${var.suffix}"
+
+  enable_serverless_compute = anytrue(flatten(values({
+    for endpoint in var.sql_endpoint : (endpoint.name) => endpoint.enable_serverless_compute
+    if endpoint.enable_serverless_compute != null
+  })))
 }
 
 resource "databricks_workspace_conf" "this" {
@@ -43,8 +48,8 @@ resource "databricks_sql_endpoint" "this" {
 
   lifecycle {
     ignore_changes = [state, num_clusters]
-    precondition  {
-      condition = each.value.enable_serverless_compute != null ? (each.value.enable_serverless_compute ? each.value.warehouse_type == "PRO" : false) : true
+    precondition {
+      condition     = each.value.enable_serverless_compute != null ? (each.value.enable_serverless_compute ? each.value.warehouse_type == "PRO" : false) : true
       error_message = "To create Serverless SQL Endpoint, please set 'warehouse_type' parameter value to 'PRO' explicitly"
     }
   }
