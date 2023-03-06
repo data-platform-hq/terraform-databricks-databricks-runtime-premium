@@ -1,3 +1,16 @@
+# [1.5.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.4.2...v1.5.0) (2023-03-06)
+
+
+### Bug Fixes
+
+* updated serverless condition ([171f881](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/171f88131130dfffacf7e35ac64cd9b91bc6d40e))
+
+
+### Features
+
+* clean-up ([26ea36d](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/26ea36dd33c53db8111cf8fab4ba5e4fba04380b))
+* sql refactor, serverless feature, consistent permissions ([fafee0c](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/fafee0c6a25ce683fd2bf8257fb0589a620e8d9c))
+
 ## [1.4.2](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.4.1...v1.4.2) (2023-02-25)
 
 
