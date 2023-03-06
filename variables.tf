@@ -61,20 +61,6 @@ variable "iam" {
   }
 }
 
-variable "iam_permissions" {
-  type = map(object({
-    CAN_USE    = list(string)
-    CAN_MANAGE = list(string)
-  }))
-  description = "Map of permission for groups. You can provide certain permission on services to groups. E.g., `'sql_endpoint'={'CAN_USE'=['group1', 'group2'] CAN_MANAGE=['group3']}"
-  default = {
-    "sql_endpoint" = {
-      "CAN_USE"    = ["default"]
-      "CAN_MANAGE" = []
-    }
-  }
-}
-
 # Default Cluster and Cluster Policy variables
 variable "default_cluster_id" {
   type        = map(string)
@@ -98,36 +84,23 @@ variable "cluster_policies_object" {
 
 # SQL Endpoint variables
 variable "sql_endpoint" {
-  type = map(object({
-    cluster_size              = string
+  type = set(object({
+    name                      = string
+    cluster_size              = optional(string)
     min_num_clusters          = optional(number)
     max_num_clusters          = optional(number)
     auto_stop_mins            = optional(string)
     enable_photon             = optional(bool)
     enable_serverless_compute = optional(bool)
+    spot_instance_policy      = optional(string)
+    warehouse_type            = optional(string)
+    permissions = optional(set(object({
+      group_name       = string
+      permission_level = string
+    })))
   }))
-  description = "Map of SQL Endoints to be deployed in Databricks Workspace"
-  default     = {}
-}
-
-variable "default_values_sql_endpoint" {
-  description = "Default values for SQL Endpoint"
-  type = object({
-    cluster_size              = string
-    min_num_clusters          = number
-    max_num_clusters          = number
-    auto_stop_mins            = string
-    enable_photon             = bool
-    enable_serverless_compute = bool
-  })
-  default = {
-    cluster_size              = "2X-Small"
-    min_num_clusters          = 0
-    max_num_clusters          = 1
-    auto_stop_mins            = "30"
-    enable_photon             = false
-    enable_serverless_compute = false
-  }
+  description = "Set of objects with parameters to configure SQL Endpoint and assign permissions to it for certain custom groups"
+  default = []
 }
 
 # Unity Catalog variables

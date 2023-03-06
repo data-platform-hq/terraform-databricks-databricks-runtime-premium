@@ -38,21 +38,20 @@ resource "databricks_permissions" "cluster_policy" {
 }
 
 resource "databricks_permissions" "sql_endpoint" {
-  for_each = { for entry in databricks_sql_endpoint.this : (entry.name) => (entry.id) }
-
-  sql_endpoint_id = each.value
-
-  dynamic "access_control" {
-    for_each = { for entry in flatten([for resource, permissions in var.iam_permissions : [for permission, groups in permissions : [for group in groups : {
-      resource = resource, permission = permission, group = group
-    } if resource == "sql_endpoint"]]]) : "${entry.resource}.${entry.permission}.${entry.group}" => entry }
-    content {
-      group_name       = access_control.value.group
-      permission_level = access_control.value.permission
-    }
+  for_each = {
+    for endpoint in var.sql_endpoint : (endpoint.name) => endpoint
+    if endpoint.permissions != null
   }
 
-  depends_on = [databricks_group.this]
+  sql_endpoint_id = databricks_sql_endpoint.this[each.key].id
+
+  dynamic "access_control" {
+    for_each = each.value.permissions
+    content {
+      group_name       = databricks_group.this[access_control.value.group_name].display_name
+      permission_level = access_control.value.permission_level
+    }
+  }
 }
 
 resource "databricks_secret_acl" "this" {
