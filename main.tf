@@ -1,11 +1,6 @@
 locals {
   ip_rules = var.ip_rules == null ? null : values(var.ip_rules)
   suffix   = length(var.suffix) == 0 ? "" : "-${var.suffix}"
-
-  enable_serverless_compute = anytrue(flatten(values({
-    for endpoint in var.sql_endpoint : (endpoint.name) => endpoint.enable_serverless_compute
-    if endpoint.enable_serverless_compute != null
-  })))
 }
 
 resource "databricks_workspace_conf" "this" {
@@ -28,7 +23,7 @@ resource "databricks_ip_access_list" "this" {
 
 # SQL Endpoint
 resource "databricks_sql_global_config" "this" {
-  count = local.enable_serverless_compute ? 1 : 0
+  count = anytrue(var.sql_endpoint[*].enable_serverless_compute) ? 1 : 0
 
   enable_serverless_compute = true
 }
