@@ -72,13 +72,12 @@ resource "databricks_group_member" "this" {
 resource "databricks_entitlements" "this" {
   for_each = {
     for group, params in var.iam : group => params
-    if params.entitlements != null
   }
 
   group_id                   = databricks_group.this[each.key].id
-  allow_cluster_create       = contains(each.value.entitlements, "allow_cluster_create")
-  allow_instance_pool_create = contains(each.value.entitlements, "allow_instance_pool_create")
-  databricks_sql_access      = contains(each.value.entitlements, "databricks_sql_access")
+  allow_cluster_create       = contains(coalesce(each.value.entitlements, []), "allow_cluster_create")
+  allow_instance_pool_create = contains(coalesce(each.value.entitlements, []), "allow_instance_pool_create")
+  databricks_sql_access      = contains(coalesce(each.value.entitlements, []), "databricks_sql_access")
   workspace_access           = true
 
   depends_on = [databricks_group_member.this]
