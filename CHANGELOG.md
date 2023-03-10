@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.5.0...v1.5.1) (2023-03-10)
+
+
+### Bug Fixes
+
+* entitlements validation and creation fix ([3b84508](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/3b84508088f32f3872b23b4fc7b48dca31d21ac4))
+
 # [1.5.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.4.2...v1.5.0) (2023-03-06)
 
 
