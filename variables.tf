@@ -54,8 +54,8 @@ variable "iam" {
   default     = {}
 
   validation {
-    condition = contains(values(var.iam), "entitlements") ? alltrue([
-      for item in toset(flatten([for group, params in var.iam : params.entitlements])) : contains(["allow_cluster_create", "allow_instance_pool_create", "databricks_sql_access"], item)
+    condition = length([for item in values(var.iam)[*] : item.entitlements if item.entitlements != null]) != 0 ? alltrue([
+      for entry in flatten(values(var.iam)[*].entitlements) : contains(["allow_cluster_create", "allow_instance_pool_create", "databricks_sql_access"], entry) if entry != null
     ]) : true
     error_message = "Entitlements validation. The only suitable values are: databricks_sql_access, allow_instance_pool_create, allow_cluster_create"
   }
