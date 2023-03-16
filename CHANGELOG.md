@@ -1,3 +1,10 @@
+## [1.5.2](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.5.1...v1.5.2) (2023-03-16)
+
+
+### Bug Fixes
+
+* remove precondition ([b7fce2d](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/b7fce2df91ab68a60a6263a2a41856b994109e19))
+
 ## [1.5.1](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.5.0...v1.5.1) (2023-03-10)
 
 
