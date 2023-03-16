@@ -43,10 +43,6 @@ resource "databricks_sql_endpoint" "this" {
 
   lifecycle {
     ignore_changes = [state, num_clusters]
-    precondition {
-      condition     = each.value.enable_serverless_compute != null ? (each.value.enable_serverless_compute ? each.value.warehouse_type == "PRO" : false) : true
-      error_message = "To create Serverless SQL Endpoint, please set 'warehouse_type' parameter value to 'PRO' explicitly"
-    }
   }
   depends_on = [databricks_sql_global_config.this]
 }
