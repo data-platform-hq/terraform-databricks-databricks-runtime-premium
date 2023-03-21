@@ -133,3 +133,35 @@ resource "databricks_grants" "schema" {
     privileges = each.value.permission
   }
 }
+
+resource "databricks_cluster" "this" {
+  count = var.unity_cluster_enabled ? 1 : 0
+
+  cluster_name            = var.unity_cluster_config.cluster_name
+  spark_version           = var.unity_cluster_config.spark_version
+  spark_conf              = var.unity_cluster_config.spark_conf
+  spark_env_vars          = var.unity_cluster_config.spark_env_vars
+  data_security_mode      = var.unity_cluster_config.data_security_mode
+  node_type_id            = var.unity_cluster_config.node_type_id
+  autotermination_minutes = var.unity_cluster_config.autotermination_minutes
+
+  autoscale {
+    min_workers = var.unity_cluster_config.min_workers
+    max_workers = var.unity_cluster_config.max_workers
+  }
+
+  azure_attributes {
+    availability       = var.unity_cluster_config.availability
+    first_on_demand    = var.unity_cluster_config.first_on_demand
+    spot_bid_max_price = var.unity_cluster_config.spot_bid_max_price
+  }
+
+  #lifecycle {
+  #ignore_changes = [
+  #  state
+  #]
+  #precondition {
+  #  condition     = var.data_security_mode == "USER_ISOLATION" ? contains(["11.3.x-scala2.12", "12.0.x-scala2.12"], var.spark_version) : true
+  #  error_message = "When USER_ISOLATION is selected, please set spark version to be either one of these values: '11.3.x-scala2.12', '12.0.x-scala2.12'"
+  #}
+}
