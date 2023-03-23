@@ -157,7 +157,7 @@ resource "databricks_cluster" "this" {
   }
 
   dynamic "cluster_log_conf" {
-    for_each = length(var.cluster_log_conf_destination) == 0 ? [] : [var.cluster_log_conf_destination]
+    for_each = var.unity_cluster_config.cluster_log_conf_destination != null ? [var.unity_cluster_config.cluster_log_conf_destination] : []
     content {
       dbfs {
         destination = cluster_log_conf.value
