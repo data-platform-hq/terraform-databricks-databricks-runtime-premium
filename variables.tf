@@ -197,8 +197,8 @@ variable "unity_cluster_config" {
   type = object({
     cluster_name            = optional(string, "Unity Catalog")
     spark_version           = optional(string, "11.3.x-scala2.12")
-    spark_conf              = optional(map(any), {})
-    spark_env_vars          = optional(map(any), {})
+    spark_conf              = optional(map(any), null)
+    spark_env_vars          = optional(map(any), null)
     data_security_mode      = optional(string, "USER_ISOLATION")
     node_type_id            = optional(string, "Standard_D3_v2")
     autotermination_minutes = optional(number, 30)
@@ -207,8 +207,21 @@ variable "unity_cluster_config" {
     availability            = optional(string, "ON_DEMAND_AZURE")
     first_on_demand         = optional(number, 0)
     spot_bid_max_price      = optional(number, 1)
-
+    permissions = optional(set(object({
+      group_name       = string
+      permission_level = string
+    })), null)
   })
   description = "Specifies the databricks unity cluster configuration"
   default     = {}
+}
+
+variable "cluster_log_conf_destination" {
+  type        = string
+  description = "Provide a dbfs location to push all cluster logs to certain location"
+  default     = ""
+  validation {
+    condition     = length(var.cluster_log_conf_destination) == 0 ? true : startswith(var.cluster_log_conf_destination, "dbfs:/")
+    error_message = "Provide valid path to dbfs logs folder, example: 'dbfs:/logs'"
+  }
 }

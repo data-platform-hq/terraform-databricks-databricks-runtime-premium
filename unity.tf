@@ -156,12 +156,18 @@ resource "databricks_cluster" "this" {
     spot_bid_max_price = var.unity_cluster_config.spot_bid_max_price
   }
 
-  #lifecycle {
-  #ignore_changes = [
-  #  state
-  #]
-  #precondition {
-  #  condition     = var.data_security_mode == "USER_ISOLATION" ? contains(["11.3.x-scala2.12", "12.0.x-scala2.12"], var.spark_version) : true
-  #  error_message = "When USER_ISOLATION is selected, please set spark version to be either one of these values: '11.3.x-scala2.12', '12.0.x-scala2.12'"
-  #}
+  dynamic "cluster_log_conf" {
+    for_each = length(var.cluster_log_conf_destination) == 0 ? [] : [var.cluster_log_conf_destination]
+    content {
+      dbfs {
+        destination = cluster_log_conf.value
+      }
+    }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      state
+    ]
+  }
 }
