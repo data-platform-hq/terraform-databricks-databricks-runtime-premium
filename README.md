@@ -2,6 +2,260 @@
 Terraform module used for management of Databricks Premium Resources
 
 ## Usage
+### **Requires Workspace with "Premium" SKU** 
+
+The main idea behind this module is to deploy resources for Databricks Workspace with Premium SKU only.
+
+Here we provide some examples of how to provision it with a different options.
+
+### In example below, these features of given module would be covered:
+1. Workspace admins assignment, custom Workspace group creation, group assignments, group entitlements
+2. Workspace IP Access list creation
+3. SQL Endpoint creation and configuration 
+4. Create Cluster policy and assign permissions to custom groups 
+5. Create Secret Scope and assign permissions to custom groups
+6. Connect to already existing Unity Catalog Metastore
+
+```hcl
+# Prerequisite resources
+
+# Databricks Workspace with Premium SKU
+data "azurerm_databricks_workspace" "example" {
+  name                = "example-workspace"
+  resource_group_name = "example-rg"
+}
+
+# Databricks Provider configuration
+provider "databricks" {
+  alias                       = "main"
+  host                        = data.azurerm_databricks_workspace.example.workspace_url
+  azure_workspace_resource_id = data.azurerm_databricks_workspace.example.id
+}
+
+# Key Vault where Service Principal's secrets are stored. Used for mounting Storage Container
+data "azurerm_key_vault" "example" {
+  name                = "example-key-vault"
+  resource_group_name = "example-rg"
+}
+
+# Given module is tightly coupled with this "Runtime Premium" module, it's usage is prerequisite.
+module "databricks_runtime_core" {
+  source  = "data-platform-hq/databricks-runtime/databricks"
+
+  sku          = data.databricks_workspace.example.sku
+  workspace_id = data.databricks_workspace.example.workspace_id
+
+  # Parameters of Service principal used for ADLS mount
+  # Imports App ID and Secret of Service Principal from target Key Vault
+  key_vault_id             =  data.azurerm_key_vault.example.id
+  sp_client_id_secret_name = "sp-client-id" # secret's name that stores Service Principal App ID
+  sp_key_secret_name       = "sp-key" # secret's name that stores Service Principal Secret Key
+  tenant_id_secret_name    = "infra-arm-tenant-id" # secret's name that stores tenant id value
+
+  # Default cluster parameters
+  custom_cluster_policies = [{
+    name     = "custom_policy_1",
+    assigned = true, # automatically assigns this policy to default shared cluster if set 'true'
+    can_use  =  "DEVELOPERS", # custom workspace group name, that is allowed to use this policy
+    definition = {
+      "autoscale.max_workers": {
+        "type": "range",
+        "maxValue": 3,
+        "defaultValue": 2
+      },
+    }
+  }]
+
+  # Additional Secret Scope
+  secret_scope = [{
+    scope_name = "extra-scope"
+    # Only custom workspace group names are allowed. If left empty then only Workspace admins could access these keys
+    acl = [
+      { principal = "DEVELOPERS", permission = "READ" }
+    ] 
+    secrets = [
+      { key = "secret-name", string_value = "secret-value"}
+    ]
+  }]
+
+  providers = {
+    databricks = databricks.main
+  }
+}
+
+# Example usage of module for Runtime Premium resources.
+module "databricks_runtime_premium" {
+  source  = "data-platform-hq/databricks-runtime-premium/databricks"
+
+  project  = "datahq"
+  env      = "example"
+  location = "eastus"
+  
+  # Workspace could be accessed only from these IP Addresses:
+  ip_rules = {
+    "ip_range_1" = "10.128.0.0/16",
+    "ip_range_2" = "10.33.0.0/16",
+  }
+  
+  # Here is the map of users and theirs object ids. 
+  # This step is optional, in case of Service Principal assignment to workspace, 
+  # please only required to provide APP ID as it's value
+  user_object_ids = {
+    "example-service-principal" = "ebfasddf-05sd-4sdc-aasa-ddffgs83c299"
+    "user1@example.com"         = "ebfasddf-05sd-4sdc-aasa-ddffgs83c256"
+    "user2@example.com"         = "ebfasddf-05sd-4sdc-aasa-ddffgs83c865"
+  }
+  
+  # To connect to already existing metastore you have to provide it's id.
+  # An example of new Metastore creation provided below
+  databricks_external_metastore_id = "<uuid-of-metastore>"
+  
+  # Workspace admins
+  workspace_admins = {
+    user = [
+      "user1@example.com"
+    ]
+    service_principal = [
+      "example-app-id"
+    ]
+  }
+  
+  # Custom Workspace group with assigned users/service_principals.
+  # In addition, provides an ability to create group entitlements and assign permission to a custom group on default cluster.
+  iam = {
+    DEVELOPERS = {
+      user = [
+        "user1@example.com",
+        "user2@example.com"
+      ]
+    "service_principal" = []
+    entitlements = ["allow_instance_pool_create","allow_cluster_create","databricks_sql_access"]
+    default_cluster_permission = "CAN_RESTART" # assigns certain permission on default cluster to created group
+    }
+  }
+  
+  # Default cluster params, this cluster created in "Runtime Core module"
+  default_cluster_id      = { default = module.databricks_runtime_core.cluster_id } 
+  
+  # Assigns permission on cluster policy to a custom group ("DEVELOPERS" in this example) 
+  cluster_policies_object = module.databricks_runtime_core.cluster_policies_object
+  
+  # Assigns acls on secret scope to a custom group ("DEVELOPERS" in this example) 
+  secret_scope_object     = module.databricks_runtime_core.secret_scope_object
+  
+  providers = {
+    databricks = databricks.main
+  }
+}
+```
+
+### Create Unity Catalog metastore
+An example below explains to create Unity Catalog Metastore. 
+It is highly recommended to create Metastore on separate environment or even Azure subscription.
+
+```hcl
+# Prerequisite resources
+
+# Databricks Workspace with Premium SKU
+data "azurerm_databricks_workspace" "example" {
+  name                = "example-workspace"
+  resource_group_name = "example-rg"
+}
+
+# Databricks Provider configuration
+provider "databricks" {
+  alias                       = "main"
+  host                        = data.azurerm_databricks_workspace.example.workspace_url
+  azure_workspace_resource_id = data.azurerm_databricks_workspace.example.id
+}
+
+# This Access connector cloud be created with Databricks Workspace module
+resource "azurerm_databricks_access_connector" "example" {
+  name                = "databrickstest"
+  resource_group_name = "example-rg"
+  location            = "eastus"
+
+  identity {
+    type = "SystemAssigned"
+  }
+}
+
+# Storage Account where metastore would be created
+data "azurerm_storage_account" "example" {
+  name                = "metastore"
+  resource_group_name = "example-rg"
+}
+
+# Example usage of module for Unity Catalog Metastore creation
+module "databricks_runtime_premium" {
+  source  = "data-platform-hq/databricks-runtime-premium/databricks"
+
+  project  = "datahq"
+  env      = "example"
+  location = "eastus"
+
+  ip_rules = {
+    "example_devops-0" = "10.128.0.0/16",
+    "example_devops-1" = "10.33.0.0/16",
+  }
+  user_object_ids = {
+    "example-app-id"    = "ebfasddf-05sd-4sdc-aasa-ddffgs83c299"
+    "user1@example.com" = "ebfasddf-05sd-4sdc-aasa-ddffgs83c256"
+  }
+  
+  # Unity Catalog
+  create_metastore      = true
+  metastore_grants      = { "account users" = ["CREATE_CATALOG"] }
+  
+  access_connector_id   = azurerm_databricks_access_connector.example.id
+  workspace_id          = data.azurerm_databricks_workspace.example.id
+  
+  
+  catalog = {
+    catalog-one-data = {
+      catalog_grants = {
+        "user1@example.com" = ["USE_CATALOG", "USE_SCHEMA", "CREATE_SCHEMA", "CREATE_TABLE", "SELECT", "MODIFY"]
+        "account users"    = ["USE_CATALOG", "USE_SCHEMA", "SELECT"]
+      }
+      catalog_comment = "This catalog is created by Terraform"
+      schema_name        = ["schema1", "schema2", "schema3"]
+      schema_grants      = {
+        "account_users" = ["USE_SCHEMA", "CREATE_TABLE","CREATE_VIEW", "MODIFY"]
+      }
+      schema_comment     = "Created by terraform. Allowed for SELECT operations"
+      schema_properties  = { allowed = "all users"}
+    }
+    
+    catalog-two-admin = {
+      catalog_grants = {
+        "user1@example.com" = ["USE_CATALOG", "USE_SCHEMA", "CREATE_SCHEMA", "CREATE_TABLE", "SELECT", "MODIFY"]
+      }
+      catalog_comment = "This catalog is created by Terraform"
+      schema_name        = ["schema1"]
+      schema_properties  = { allowed = "admin only"}
+    }
+}
+  
+  # Storage Account where Metastore would be created
+  storage_account_id    = data.azurerm_storage_account.example.id
+  storage_account_name  = data.azurerm_storage_account.example.name
+
+  # Permissions
+  workspace_admins = {
+    user = [
+      "user1@example.com",
+    ]
+    service_principal = [
+      "example-app-id"
+    ]
+  }
+  
+  providers = {
+    databricks = databricks.main
+  }
+}
+```
+
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
