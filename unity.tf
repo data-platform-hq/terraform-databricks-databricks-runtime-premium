@@ -133,3 +133,41 @@ resource "databricks_grants" "schema" {
     privileges = each.value.permission
   }
 }
+
+resource "databricks_cluster" "this" {
+  count = var.unity_cluster_enabled ? 1 : 0
+
+  cluster_name            = var.unity_cluster_config.cluster_name
+  spark_version           = var.unity_cluster_config.spark_version
+  spark_conf              = var.unity_cluster_config.spark_conf
+  spark_env_vars          = var.unity_cluster_config.spark_env_vars
+  data_security_mode      = var.unity_cluster_config.data_security_mode
+  node_type_id            = var.unity_cluster_config.node_type_id
+  autotermination_minutes = var.unity_cluster_config.autotermination_minutes
+
+  autoscale {
+    min_workers = var.unity_cluster_config.min_workers
+    max_workers = var.unity_cluster_config.max_workers
+  }
+
+  azure_attributes {
+    availability       = var.unity_cluster_config.availability
+    first_on_demand    = var.unity_cluster_config.first_on_demand
+    spot_bid_max_price = var.unity_cluster_config.spot_bid_max_price
+  }
+
+  dynamic "cluster_log_conf" {
+    for_each = var.unity_cluster_config.cluster_log_conf_destination != null ? [var.unity_cluster_config.cluster_log_conf_destination] : []
+    content {
+      dbfs {
+        destination = cluster_log_conf.value
+      }
+    }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      state
+    ]
+  }
+}

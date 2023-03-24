@@ -37,6 +37,20 @@ resource "databricks_permissions" "cluster_policy" {
   }
 }
 
+resource "databricks_permissions" "unity_cluster" {
+  count = length(var.unity_cluster_config.permissions) != 0 && var.unity_cluster_enabled ? 1 : 0
+
+  cluster_id = databricks_cluster.this[0].id
+
+  dynamic "access_control" {
+    for_each = var.unity_cluster_config.permissions
+    content {
+      group_name       = databricks_group.this[access_control.value.group_name].display_name
+      permission_level = access_control.value.permission_level
+    }
+  }
+}
+
 resource "databricks_permissions" "sql_endpoint" {
   for_each = {
     for endpoint in var.sql_endpoint : (endpoint.name) => endpoint

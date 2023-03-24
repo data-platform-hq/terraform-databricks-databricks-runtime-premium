@@ -186,3 +186,33 @@ variable "secret_scope_object" {
     acl        = null
   }]
 }
+
+variable "unity_cluster_enabled" {
+  type        = bool
+  description = "Boolean flag for creating databricks claster"
+  default     = false
+}
+
+variable "unity_cluster_config" {
+  type = object({
+    cluster_name                 = optional(string, "Unity Catalog")
+    spark_version                = optional(string, "11.3.x-scala2.12")
+    spark_conf                   = optional(map(any), null)
+    spark_env_vars               = optional(map(any), null)
+    data_security_mode           = optional(string, "USER_ISOLATION")
+    node_type_id                 = optional(string, "Standard_D3_v2")
+    autotermination_minutes      = optional(number, 30)
+    min_workers                  = optional(number, 1)
+    max_workers                  = optional(number, 2)
+    availability                 = optional(string, "ON_DEMAND_AZURE")
+    first_on_demand              = optional(number, 0)
+    spot_bid_max_price           = optional(number, 1)
+    cluster_log_conf_destination = optional(string, null)
+    permissions = optional(set(object({
+      group_name       = string
+      permission_level = string
+    })), null)
+  })
+  description = "Specifies the databricks unity cluster configuration"
+  default     = {}
+}
