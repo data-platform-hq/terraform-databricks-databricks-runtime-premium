@@ -1,3 +1,17 @@
+# [1.6.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.5.2...v1.6.0) (2023-03-24)
+
+
+### Bug Fixes
+
+* add group permission index ([dc6df2f](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/dc6df2f724a9ac203a5be407db09d762517ab34e))
+* changed readmi ([01f9431](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/01f9431e87adc050a7fa5d95a228abfbaf2b5f1a))
+
+
+### Features
+
+* added few different examples for module usage ([d9ead71](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/d9ead71748644fd66e84f04a60ee8e8d3588ef4c))
+* uniti claster ([49a0afa](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/49a0afaad87db263b2deff4f96219b9cb23eaf04))
+
 ## [1.5.2](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.5.1...v1.5.2) (2023-03-16)
 
 
