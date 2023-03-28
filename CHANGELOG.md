@@ -1,3 +1,10 @@
+## [1.6.1](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.6.0...v1.6.1) (2023-03-28)
+
+
+### Bug Fixes
+
+* update unity cluster condition ([b99e77a](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/b99e77aa1963551dce8e8500d5627902d05cd1b9))
+
 # [1.6.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.5.2...v1.6.0) (2023-03-24)
 
 
