@@ -38,7 +38,7 @@ resource "databricks_permissions" "cluster_policy" {
 }
 
 resource "databricks_permissions" "unity_cluster" {
-  count = length(var.unity_cluster_config.permissions) != 0 && var.unity_cluster_enabled ? 1 : 0
+  count = var.unity_cluster_config.permissions != null && var.unity_cluster_enabled ? 1 : 0
 
   cluster_id = databricks_cluster.this[0].id
 
