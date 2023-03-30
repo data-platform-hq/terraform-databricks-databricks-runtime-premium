@@ -1,5 +1,6 @@
 locals {
-  secrets_acl_objects_list = flatten([for param in var.secret_scope_object : [
+  secrets_acl_objects_list = flatten([for param in local.secret_scope_object : [
+  #secrets_acl_objects_list = flatten([for param in var.secret_scope_object : [
     for permission in param.acl : {
       scope = param.scope_name, principal = permission.principal, permission = permission.permission
     }] if param.acl != null
@@ -23,6 +24,7 @@ resource "databricks_permissions" "default_cluster" {
 resource "databricks_permissions" "cluster_policy" {
   for_each = {
     for policy in var.cluster_policies_object : (policy.name) => policy
+    #for policy in var.cluster_policies_object : (policy.name) => policy
     if policy.can_use != null
   }
 
@@ -38,7 +40,7 @@ resource "databricks_permissions" "cluster_policy" {
 }
 
 resource "databricks_permissions" "unity_cluster" {
-  count = var.unity_cluster_config.permissions != null && var.unity_cluster_enabled ? 1 : 0
+  count = length(var.unity_cluster_config.permissions) != 0 && var.unity_cluster_enabled ? 1 : 0
 
   cluster_id = databricks_cluster.this[0].id
 

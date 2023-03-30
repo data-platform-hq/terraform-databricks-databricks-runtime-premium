@@ -216,3 +216,65 @@ variable "unity_cluster_config" {
   description = "Specifies the databricks unity cluster configuration"
   default     = {}
 }
+
+######
+variable "sp_client_id_secret_name" {
+  type        = string
+  description = "The name of Azure Key Vault secret that contains ClientID of Service Principal to access in Azure Key Vault"
+}
+
+variable "sp_key_secret_name" {
+  type        = string
+  description = "The name of Azure Key Vault secret that contains client secret of Service Principal to access in Azure Key Vault"
+}
+
+# Secret Scope variables
+variable "secret_scope" {
+  type = list(object({
+    scope_name = string
+    acl = optional(list(object({
+      principal  = string
+      permission = string
+    })))
+    secrets = optional(list(object({
+      key          = string
+      string_value = string
+    })))
+  }))
+  description = <<-EOT
+Provides an ability to create custom Secret Scope, store secrets in it and assigning ACL for access management
+scope_name - name of Secret Scope to create;
+acl - list of objects, where 'principal' custom group name, this group is created in 'Premium' module; 'permission' is one of "READ", "WRITE", "MANAGE";
+secrets - list of objects, where object's 'key' param is created key name and 'string_value' is a value for it;
+EOT
+  default = [{
+    scope_name = null
+    acl        = null
+    secrets    = null
+  }]
+}
+
+variable "sku" {
+  type        = string
+  description = "The sku to use for the Databricks Workspace: [standard|premium|trial]"
+  default     = "premium"
+}
+
+variable "key_vault_id" {
+  type        = string
+  description = "ID of the Key Vault instance where the Secret resides"
+}
+
+variable "tenant_id_secret_name" {
+  type        = string
+  description = "The name of Azure Key Vault secret that contains tenant ID secret of Service Principal to access in Azure Key Vault"
+}
+
+variable "mountpoints" {
+  type = map(object({
+    storage_account_name = string
+    container_name       = string
+  }))
+  description = "Mountpoints for databricks"
+  default     = {}
+}
