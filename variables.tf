@@ -61,43 +61,22 @@ variable "iam" {
   }
 }
 
-# Default Cluster and Cluster Policy variables
-variable "default_cluster_id" {
-  type        = map(string)
-  description = "Single value of default Cluster id created by 'databricks-runtime' module"
-  default     = {}
-}
-
-variable "cluster_policies_object" {
-  type = list(object({
-    id      = string
-    name    = string
-    can_use = list(string)
-  }))
-  description = "List of objects that provides an ability to grant custom workspace group a permission to use(CAN_USE) cluster policy"
-  default = [{
-    id      = null
-    name    = null
-    can_use = null
-  }]
-}
-
 # SQL Endpoint variables
 variable "sql_endpoint" {
   type = set(object({
     name                      = string
-    cluster_size              = optional(string)
-    min_num_clusters          = optional(number)
-    max_num_clusters          = optional(number)
-    auto_stop_mins            = optional(string)
-    enable_photon             = optional(bool)
-    enable_serverless_compute = optional(bool)
-    spot_instance_policy      = optional(string)
-    warehouse_type            = optional(string)
+    cluster_size              = optional(string, "2X-Small")
+    min_num_clusters          = optional(number, 0)
+    max_num_clusters          = optional(number, 1)
+    auto_stop_mins            = optional(string, "30")
+    enable_photon             = optional(bool, false)
+    enable_serverless_compute = optional(bool, false)
+    spot_instance_policy      = optional(string, "COST_OPTIMIZED")
+    warehouse_type            = optional(string, "PRO")
     permissions = optional(set(object({
       group_name       = string
       permission_level = string
-    })))
+    })), [])
   }))
   description = "Set of objects with parameters to configure SQL Endpoint and assign permissions to it for certain custom groups"
   default     = []
@@ -254,12 +233,6 @@ EOT
   }]
 }
 
-variable "sku" {
-  type        = string
-  description = "The sku to use for the Databricks Workspace: [standard|premium|trial]"
-  default     = "premium"
-}
-
 variable "key_vault_id" {
   type        = string
   description = "ID of the Key Vault instance where the Secret resides"
@@ -277,4 +250,54 @@ variable "mountpoints" {
   }))
   description = "Mountpoints for databricks"
   default     = {}
+}
+
+variable "custom_cluster_policies" {
+  type = list(object({
+    name       = string
+    can_use    = list(string)
+    definition = any
+    assigned   = bool
+  }))
+  description = <<-EOT
+Provides an ability to create custom cluster policy, assign it to cluster and grant CAN_USE permissions on it to certain custom groups
+name - name of custom cluster policy to create
+can_use - list of string, where values are custom group names, there groups have to be created with Terraform;
+definition - JSON document expressed in Databricks Policy Definition Language. No need to call 'jsonencode()' function on it when providing a value;
+assigned - boolean flag which assigns policy to default 'shared autoscaling' cluster, only single custom policy could be assigned;
+EOT
+  default = [{
+    name       = null
+    can_use    = null
+    definition = null
+    assigned   = false
+  }]
+  validation {
+    condition     = length([for policy in var.custom_cluster_policies : policy.assigned if policy.assigned]) <= 1
+    error_message = "Only single cluster policy assignment allowed. Please set 'assigned' parameter to 'true' for exact one or none policy"
+  }
+}
+
+variable "clusters" {
+  type = set(object({
+    cluster_name                 = string
+    spark_version                = optional(string, "11.3.x-scala2.12")
+    spark_conf                   = optional(map(any), {})
+    spark_env_vars               = optional(map(any), {})
+    data_security_mode           = optional(string, "USER_ISOLATION")
+    node_type_id                 = optional(string, "Standard_D3_v2")
+    autotermination_minutes      = optional(number, 30)
+    min_workers                  = optional(number, 1)
+    max_workers                  = optional(number, 2)
+    availability                 = optional(string, "ON_DEMAND_AZURE")
+    first_on_demand              = optional(number, 0)
+    spot_bid_max_price           = optional(number, 1)
+    cluster_log_conf_destination = optional(string, null)
+    permissions = optional(set(object({
+      group_name       = string
+      permission_level = string
+    })), [])
+  }))
+  description = "Set of objects with parameters to configure Databricks clusters and assign permissions to it for certain custom groups"
+  default     = []
 }

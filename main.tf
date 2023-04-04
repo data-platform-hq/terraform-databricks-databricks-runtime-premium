@@ -47,14 +47,14 @@ resource "databricks_sql_endpoint" "this" {
   for_each = { for endpoint in var.sql_endpoint : (endpoint.name) => endpoint }
 
   name                      = "${each.key}${local.suffix}"
-  cluster_size              = coalesce(each.value.cluster_size, "2X-Small")
-  min_num_clusters          = coalesce(each.value.min_num_clusters, 0)
-  max_num_clusters          = coalesce(each.value.max_num_clusters, 1)
-  auto_stop_mins            = coalesce(each.value.auto_stop_mins, "30")
-  enable_photon             = coalesce(each.value.enable_photon, false)
-  enable_serverless_compute = coalesce(each.value.enable_serverless_compute, false)
-  spot_instance_policy      = coalesce(each.value.spot_instance_policy, "COST_OPTIMIZED")
-  warehouse_type            = coalesce(each.value.warehouse_type, "PRO")
+  cluster_size              = each.value.cluster_size
+  min_num_clusters          = each.value.min_num_clusters
+  max_num_clusters          = each.value.max_num_clusters
+  auto_stop_mins            = each.value.auto_stop_mins
+  enable_photon             = each.value.enable_photon
+  enable_serverless_compute = each.value.enable_serverless_compute
+  spot_instance_policy      = each.value.spot_instance_policy
+  warehouse_type            = each.value.warehouse_type
 
   lifecycle {
     ignore_changes = [state, num_clusters]

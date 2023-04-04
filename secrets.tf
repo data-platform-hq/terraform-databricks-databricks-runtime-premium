@@ -9,23 +9,12 @@ locals {
       scope_name = param.scope_name, key = secret.key, string_value = secret.string_value
     }] if param.secrets != null
   ])
-
-  secret_scope_object = [for param in var.secret_scope : {
-    scope_name = databricks_secret_scope.this[param.scope_name].name
-    acl        = param.acl
-  } if param.acl != null]
-
-  #cluster_policies_object = [for policy in var.custom_cluster_policies : {
-  #  id      = databricks_cluster_policy.this[policy.name].id
-  #  name    = databricks_cluster_policy.this[policy.name].name
-  #  can_use = policy.can_use
-  #} if policy.definition != null && var.sku == "premium"]
 }
 
 # Secret Scope with SP secrets for mounting Azure Data Lake Storage
 resource "databricks_secret_scope" "main" {
   name                     = "main"
-  initial_manage_principal = var.sku == "premium" ? null : "users"
+  initial_manage_principal = null
 }
 
 resource "databricks_secret" "main" {
@@ -44,7 +33,7 @@ resource "databricks_secret_scope" "this" {
   }
 
   name                     = each.key
-  initial_manage_principal = var.sku == "premium" ? null : "users"
+  initial_manage_principal = null
 }
 
 resource "databricks_secret" "this" {

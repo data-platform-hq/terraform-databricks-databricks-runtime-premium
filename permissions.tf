@@ -1,40 +1,39 @@
 locals {
-  secrets_acl_objects_list = flatten([for param in local.secret_scope_object : [
-  #secrets_acl_objects_list = flatten([for param in var.secret_scope_object : [
+  secrets_acl_objects_list = flatten([for param in var.secret_scope_object : [
     for permission in param.acl : {
       scope = param.scope_name, principal = permission.principal, permission = permission.permission
     }] if param.acl != null
   ])
+
+  secret_scope_object = [for param in var.secret_scope : {
+    scope_name = databricks_secret_scope.this[param.scope_name].name
+    acl        = param.acl
+  } if param.acl != null]
 }
 
-resource "databricks_permissions" "default_cluster" {
-  for_each = coalesce(flatten([values(var.iam)[*].default_cluster_permission, "none"])...) != "none" ? var.default_cluster_id : {}
-
-  cluster_id = each.value
-
-  dynamic "access_control" {
-    for_each = { for k, v in var.iam : k => v.default_cluster_permission if v.default_cluster_permission != null }
-    content {
-      group_name       = databricks_group.this[access_control.key].display_name
-      permission_level = access_control.value
-    }
-  }
-}
-
-resource "databricks_permissions" "cluster_policy" {
+resource "databricks_cluster_policy" "this" {
   for_each = {
-    for policy in var.cluster_policies_object : (policy.name) => policy
-    #for policy in var.cluster_policies_object : (policy.name) => policy
-    if policy.can_use != null
+    for param in var.custom_cluster_policies : (param.name) => param.definition
+    if param.definition != null
   }
 
-  cluster_policy_id = each.value.id
+  name       = each.key
+  definition = jsonencode(each.value)
+}
+
+resource "databricks_permissions" "clusters" {
+  for_each = {
+    for v in var.clusters : (v.cluster_name) => v
+    if length(v.permissions) != 0
+  }
+
+  cluster_id = databricks_cluster.cluster[each.key].id
 
   dynamic "access_control" {
-    for_each = each.value.can_use
+    for_each = each.value.permissions
     content {
-      group_name       = databricks_group.this[access_control.value].display_name
-      permission_level = "CAN_USE"
+      group_name       = databricks_group.this[access_control.value.group_name].display_name
+      permission_level = access_control.value.permission_level
     }
   }
 }
@@ -56,7 +55,7 @@ resource "databricks_permissions" "unity_cluster" {
 resource "databricks_permissions" "sql_endpoint" {
   for_each = {
     for endpoint in var.sql_endpoint : (endpoint.name) => endpoint
-    if endpoint.permissions != null
+    if length(endpoint.permissions) != 0
   }
 
   sql_endpoint_id = databricks_sql_endpoint.this[each.key].id
