@@ -4,11 +4,6 @@ locals {
       scope = param.scope_name, principal = permission.principal, permission = permission.permission
     }] if param.acl != null
   ])
-
-  secret_scope_object = [for param in var.secret_scope : {
-    scope_name = databricks_secret_scope.this[param.scope_name].name
-    acl        = param.acl
-  } if param.acl != null]
 }
 
 resource "databricks_cluster_policy" "this" {
