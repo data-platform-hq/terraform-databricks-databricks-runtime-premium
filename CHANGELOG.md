@@ -1,3 +1,18 @@
+# [1.7.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.6.1...v1.7.0) (2023-04-09)
+
+
+### Bug Fixes
+
+* add end line ([cd5a9aa](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/cd5a9aaa37299bb3684f7e26ac7bcaa51b3b2242))
+* changed uniti cluste ([9a72e4e](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/9a72e4e30211d267dbcb2357bc2efa6a95de363b))
+* delete unuses variable ([d1358b3](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/d1358b336ab0ed9120b3ac34fb5851b92748d8bc))
+
+
+### Features
+
+* redactor ([3e3477e](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/3e3477efe79b8efbec8bd0537679e37124a65a13))
+* refactoring ([3122e9f](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/3122e9fca70e0d984250f088ce04d62482216908))
+
 ## [1.6.1](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.6.0...v1.6.1) (2023-03-28)
 
 
