@@ -61,43 +61,22 @@ variable "iam" {
   }
 }
 
-# Default Cluster and Cluster Policy variables
-variable "default_cluster_id" {
-  type        = map(string)
-  description = "Single value of default Cluster id created by 'databricks-runtime' module"
-  default     = {}
-}
-
-variable "cluster_policies_object" {
-  type = list(object({
-    id      = string
-    name    = string
-    can_use = list(string)
-  }))
-  description = "List of objects that provides an ability to grant custom workspace group a permission to use(CAN_USE) cluster policy"
-  default = [{
-    id      = null
-    name    = null
-    can_use = null
-  }]
-}
-
 # SQL Endpoint variables
 variable "sql_endpoint" {
   type = set(object({
     name                      = string
-    cluster_size              = optional(string)
-    min_num_clusters          = optional(number)
-    max_num_clusters          = optional(number)
-    auto_stop_mins            = optional(string)
-    enable_photon             = optional(bool)
-    enable_serverless_compute = optional(bool)
-    spot_instance_policy      = optional(string)
-    warehouse_type            = optional(string)
+    cluster_size              = optional(string, "2X-Small")
+    min_num_clusters          = optional(number, 0)
+    max_num_clusters          = optional(number, 1)
+    auto_stop_mins            = optional(string, "30")
+    enable_photon             = optional(bool, false)
+    enable_serverless_compute = optional(bool, false)
+    spot_instance_policy      = optional(string, "COST_OPTIMIZED")
+    warehouse_type            = optional(string, "PRO")
     permissions = optional(set(object({
       group_name       = string
       permission_level = string
-    })))
+    })), [])
   }))
   description = "Set of objects with parameters to configure SQL Endpoint and assign permissions to it for certain custom groups"
   default     = []
@@ -187,18 +166,93 @@ variable "secret_scope_object" {
   }]
 }
 
-variable "unity_cluster_enabled" {
-  type        = bool
-  description = "Boolean flag for creating databricks claster"
-  default     = false
+variable "sp_client_id_secret_name" {
+  type        = string
+  description = "The name of Azure Key Vault secret that contains ClientID of Service Principal to access in Azure Key Vault"
 }
 
-variable "unity_cluster_config" {
-  type = object({
-    cluster_name                 = optional(string, "Unity Catalog")
+variable "sp_key_secret_name" {
+  type        = string
+  description = "The name of Azure Key Vault secret that contains client secret of Service Principal to access in Azure Key Vault"
+}
+
+# Secret Scope variables
+variable "secret_scope" {
+  type = list(object({
+    scope_name = string
+    acl = optional(list(object({
+      principal  = string
+      permission = string
+    })))
+    secrets = optional(list(object({
+      key          = string
+      string_value = string
+    })))
+  }))
+  description = <<-EOT
+Provides an ability to create custom Secret Scope, store secrets in it and assigning ACL for access management
+scope_name - name of Secret Scope to create;
+acl - list of objects, where 'principal' custom group name, this group is created in 'Premium' module; 'permission' is one of "READ", "WRITE", "MANAGE";
+secrets - list of objects, where object's 'key' param is created key name and 'string_value' is a value for it;
+EOT
+  default = [{
+    scope_name = null
+    acl        = null
+    secrets    = null
+  }]
+}
+
+variable "key_vault_id" {
+  type        = string
+  description = "ID of the Key Vault instance where the Secret resides"
+}
+
+variable "tenant_id_secret_name" {
+  type        = string
+  description = "The name of Azure Key Vault secret that contains tenant ID secret of Service Principal to access in Azure Key Vault"
+}
+
+variable "mountpoints" {
+  type = map(object({
+    storage_account_name = string
+    container_name       = string
+  }))
+  description = "Mountpoints for databricks"
+  default     = {}
+}
+
+variable "custom_cluster_policies" {
+  type = list(object({
+    name       = string
+    can_use    = list(string)
+    definition = any
+    assigned   = bool
+  }))
+  description = <<-EOT
+Provides an ability to create custom cluster policy, assign it to cluster and grant CAN_USE permissions on it to certain custom groups
+name - name of custom cluster policy to create
+can_use - list of string, where values are custom group names, there groups have to be created with Terraform;
+definition - JSON document expressed in Databricks Policy Definition Language. No need to call 'jsonencode()' function on it when providing a value;
+assigned - boolean flag which assigns policy to default 'shared autoscaling' cluster, only single custom policy could be assigned;
+EOT
+  default = [{
+    name       = null
+    can_use    = null
+    definition = null
+    assigned   = false
+  }]
+  validation {
+    condition     = length([for policy in var.custom_cluster_policies : policy.assigned if policy.assigned]) <= 1
+    error_message = "Only single cluster policy assignment allowed. Please set 'assigned' parameter to 'true' for exact one or none policy"
+  }
+}
+
+variable "clusters" {
+  type = set(object({
+    cluster_name                 = string
     spark_version                = optional(string, "11.3.x-scala2.12")
-    spark_conf                   = optional(map(any), null)
-    spark_env_vars               = optional(map(any), null)
+    spark_conf                   = optional(map(any), {})
+    spark_env_vars               = optional(map(any), {})
     data_security_mode           = optional(string, "USER_ISOLATION")
     node_type_id                 = optional(string, "Standard_D3_v2")
     autotermination_minutes      = optional(number, 30)
@@ -211,8 +265,8 @@ variable "unity_cluster_config" {
     permissions = optional(set(object({
       group_name       = string
       permission_level = string
-    })), null)
-  })
-  description = "Specifies the databricks unity cluster configuration"
-  default     = {}
+    })), [])
+  }))
+  description = "Set of objects with parameters to configure Databricks clusters and assign permissions to it for certain custom groups"
+  default     = []
 }
