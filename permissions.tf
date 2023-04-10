@@ -1,19 +1,16 @@
 locals {
-  secrets_acl_objects_list = flatten([for param in var.secret_scope_object : [
+  secret_scope_object =  {
+  value = [for param in var.secret_scope : {
+    scope_name = databricks_secret_scope.this[param.scope_name].name
+    acl        = param.acl
+  } if param.acl != null] 
+  }
+
+  secrets_acl_objects_list = flatten([for param in local.secret_scope_object : [
     for permission in param.acl : {
       scope = param.scope_name, principal = permission.principal, permission = permission.permission
     }] if param.acl != null
   ])
-}
-
-resource "databricks_cluster_policy" "this" {
-  for_each = {
-    for param in var.custom_cluster_policies : (param.name) => param.definition
-    if param.definition != null
-  }
-
-  name       = each.key
-  definition = jsonencode(each.value)
 }
 
 resource "databricks_permissions" "clusters" {

@@ -35,3 +35,13 @@ resource "databricks_cluster" "cluster" {
     ]
   }
 }
+
+resource "databricks_cluster_policy" "this" {
+  for_each = {
+    for param in var.custom_cluster_policies : (param.name) => param.definition
+    if param.definition != null
+  }
+
+  name       = each.key
+  definition = jsonencode(each.value)
+}

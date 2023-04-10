@@ -12,3 +12,8 @@ output "metastore_id" {
   value       = var.create_metastore ? databricks_metastore.this[0].id : ""
   description = "Unity Catalog Metastore Id"
 }
+
+output "token" {
+  value       = databricks_token.pat.token_value
+  description = "Databricks Personal Authorization Token"
+}
