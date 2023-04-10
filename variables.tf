@@ -45,9 +45,9 @@ variable "workspace_admins" {
 
 variable "iam" {
   type = map(object({
-    user                       = optional(list(string))
-    service_principal          = optional(list(string))
-    entitlements               = optional(list(string))
+    user              = optional(list(string))
+    service_principal = optional(list(string))
+    entitlements      = optional(list(string))
   }))
   description = "Used to create workspace group. Map of group name and its parameters, such as users and service principals added to the group. Also possible to configure group entitlements."
   default     = {}
@@ -245,4 +245,10 @@ variable "clusters" {
   }))
   description = "Set of objects with parameters to configure Databricks clusters and assign permissions to it for certain custom groups"
   default     = []
+}
+
+variable "pat_token_lifetime_seconds" {
+  type        = number
+  description = "The lifetime of the token, in seconds. If no lifetime is specified, the token remains valid indefinitely"
+  default     = 315569520
 }

@@ -1,9 +1,9 @@
 locals {
-  secret_scope_object =  {
-  value = [for param in var.secret_scope : {
-    scope_name = databricks_secret_scope.this[param.scope_name].name
-    acl        = param.acl
-  } if param.acl != null] 
+  secret_scope_object = {
+    value = [for param in var.secret_scope : {
+      scope_name = databricks_secret_scope.this[param.scope_name].name
+      acl        = param.acl
+    } if param.acl != null]
   }
 
   secrets_acl_objects_list = flatten([for param in local.secret_scope_object : [
