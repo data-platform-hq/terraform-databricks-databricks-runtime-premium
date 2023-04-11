@@ -10,7 +10,7 @@ Here we provide some examples of how to provision it with a different options.
 
 ### In example below, these features of given module would be covered:
 1. Workspace admins assignment, custom Workspace group creation, group assignments, group entitlements
-2. Default Shared Autoscaling cluster
+2. Clusters (i.e., for Unity Catalog and Shared Autoscaling)
 3. Workspace IP Access list creation
 4. ADLS Gen2 Mount
 5. Secret scope and its secrets
