@@ -41,12 +41,13 @@ data "azurerm_key_vault" "example" {
   resource_group_name = "example-rg"
 }
 
-# Given module is tightly coupled with this "Runtime Premium" module, it's usage is prerequisite.
+# Example usage of module for Runtime Premium resources.
 module "databricks_runtime_premium" {
   source  = "data-platform-hq/databricks-runtime-premium/databricks"
 
-  sku          = data.databricks_workspace.example.sku
-  workspace_id = data.databricks_workspace.example.workspace_id
+  project  = "datahq"
+  env      = "example"
+  location = "eastus"
 
   # Parameters of Service principal used for ADLS mount
   # Imports App ID and Secret of Service Principal from target Key Vault
@@ -76,32 +77,6 @@ module "databricks_runtime_premium" {
       },
     }
   }]
-
-  # Additional Secret Scope
-  secret_scope = [{
-    scope_name = "extra-scope"
-    # Only custom workspace group names are allowed. If left empty then only Workspace admins could access these keys
-    acl = [
-      { principal = "DEVELOPERS", permission = "READ" }
-    ] 
-    secrets = [
-      { key = "secret-name", string_value = "secret-value"}
-    ]
-  }]
-
-  providers = {
-    databricks = databricks.main
-  }
-}
-
-# Example usage of module for Runtime Premium resources.
-module "databricks_runtime_premium" {
-  source  = "data-platform-hq/databricks-runtime-premium/databricks"
-
-  project  = "datahq"
-  env      = "example"
-  location = "eastus"
-  
   # Workspace could be accessed only from these IP Addresses:
   ip_rules = {
     "ip_range_1" = "10.128.0.0/16",
@@ -129,12 +104,8 @@ module "databricks_runtime_premium" {
   
   # Workspace admins
   workspace_admins = {
-    user = [
-      "user1@example.com"
-    ]
-    service_principal = [
-      "example-app-id"
-    ]
+    user = ["user1@example.com"]
+    service_principal = ["example-app-id"]
   }
   
   # Custom Workspace group with assigned users/service_principals.
@@ -149,6 +120,13 @@ module "databricks_runtime_premium" {
     entitlements = ["allow_instance_pool_create","allow_cluster_create","databricks_sql_access"]
     }
   }
+  
+  # Additional Secret Scope
+  secret_scope = [{
+    scope_name = "extra-scope"
+    acl        = [{ principal = "DEVELOPERS", permission = "READ" }] # Only custom workspace group names are allowed. If left empty then only Workspace admins could access these keys
+    secrets    = [{ key = "secret-name", string_value = "secret-value"}]
+  }]
 
   providers = {
     databricks = databricks.main
@@ -249,13 +227,16 @@ module "databricks_runtime_premium" {
 
   # Permissions
   workspace_admins = {
-    user = [
-      "user1@example.com",
-    ]
-    service_principal = [
-      "example-app-id"
-    ]
+    user = ["user1@example.com"]
+    service_principal = ["example-app-id"]
   }
+
+  # Cluster for Unity Catalog access
+  databricks_cluster_configs = [{
+    cluster_name       = "Unity Catalog"
+    availability       = "SPOT_AZURE"
+    spot_bid_max_price = -1
+  }]
   
   providers = {
     databricks = databricks.main
