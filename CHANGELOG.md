@@ -1,3 +1,13 @@
+## [1.7.1](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.7.0...v1.7.1) (2023-04-11)
+
+
+### Bug Fixes
+
+* create variable pat_token_lifetime_seconds ([fee1b05](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/fee1b055d1ab99e85e277eccc462996bdac3780c))
+* move cluster policy to cluster tf ([90194ac](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/90194ac72b570f3f2dcadbeb8daf9a1893f662d5))
+* remove commited lines ([7789718](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/77897183750b42fc6ab8290f2bb1ac2878d593d1))
+* updated condition for secret scope ([8f4cf89](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/8f4cf8952d794d55c0329a3e7f38686e977e630f))
+
 # [1.7.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.6.1...v1.7.0) (2023-04-09)
 
 
