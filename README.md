@@ -10,11 +10,14 @@ Here we provide some examples of how to provision it with a different options.
 
 ### In example below, these features of given module would be covered:
 1. Workspace admins assignment, custom Workspace group creation, group assignments, group entitlements
-2. Workspace IP Access list creation
-3. SQL Endpoint creation and configuration 
-4. Create Cluster policy and assign permissions to custom groups 
-5. Create Secret Scope and assign permissions to custom groups
-6. Connect to already existing Unity Catalog Metastore
+2. Clusters (i.e., for Unity Catalog and Shared Autoscaling)
+3. Workspace IP Access list creation
+4. ADLS Gen2 Mount
+5. Secret scope and its secrets
+6. SQL Endpoint creation and configuration 
+7. Create Cluster policy and assign permissions to custom groups 
+8. Create Secret Scope and assign permissions to custom groups
+9. Connect to already existing Unity Catalog Metastore
 
 ```hcl
 # Prerequisite resources
@@ -38,12 +41,13 @@ data "azurerm_key_vault" "example" {
   resource_group_name = "example-rg"
 }
 
-# Given module is tightly coupled with this "Runtime Premium" module, it's usage is prerequisite.
-module "databricks_runtime_core" {
-  source  = "data-platform-hq/databricks-runtime/databricks"
+# Example usage of module for Runtime Premium resources.
+module "databricks_runtime_premium" {
+  source  = "data-platform-hq/databricks-runtime-premium/databricks"
 
-  sku          = data.databricks_workspace.example.sku
-  workspace_id = data.databricks_workspace.example.workspace_id
+  project  = "datahq"
+  env      = "example"
+  location = "eastus"
 
   # Parameters of Service principal used for ADLS mount
   # Imports App ID and Secret of Service Principal from target Key Vault
@@ -52,10 +56,18 @@ module "databricks_runtime_core" {
   sp_key_secret_name       = "sp-key" # secret's name that stores Service Principal Secret Key
   tenant_id_secret_name    = "infra-arm-tenant-id" # secret's name that stores tenant id value
 
-  # Default cluster parameters
+  # Databricks clusters configuration  
+  databricks_cluster_configs = [{
+    cluster_name       = "shared autoscaling"
+    data_security_mode = "NONE"
+    availability       = "SPOT_AZURE"
+    spot_bid_max_price = -1
+    permissions = [{group_name = "dev", permission_level = "CAN_MANAGE"}]
+  }]
+
+  # Databricks cluster policies
   custom_cluster_policies = [{
     name     = "custom_policy_1",
-    assigned = true, # automatically assigns this policy to default shared cluster if set 'true'
     can_use  =  "DEVELOPERS", # custom workspace group name, that is allowed to use this policy
     definition = {
       "autoscale.max_workers": {
@@ -65,38 +77,18 @@ module "databricks_runtime_core" {
       },
     }
   }]
-
-  # Additional Secret Scope
-  secret_scope = [{
-    scope_name = "extra-scope"
-    # Only custom workspace group names are allowed. If left empty then only Workspace admins could access these keys
-    acl = [
-      { principal = "DEVELOPERS", permission = "READ" }
-    ] 
-    secrets = [
-      { key = "secret-name", string_value = "secret-value"}
-    ]
-  }]
-
-  providers = {
-    databricks = databricks.main
-  }
-}
-
-# Example usage of module for Runtime Premium resources.
-module "databricks_runtime_premium" {
-  source  = "data-platform-hq/databricks-runtime-premium/databricks"
-
-  project  = "datahq"
-  env      = "example"
-  location = "eastus"
-  
   # Workspace could be accessed only from these IP Addresses:
   ip_rules = {
     "ip_range_1" = "10.128.0.0/16",
     "ip_range_2" = "10.33.0.0/16",
   }
   
+  # ADLS Gen2 Mount
+  mountpoints = {
+    storage_account_name = data.azurerm_storage_account.example.name
+    container_name       = "example_container"
+  }
+
   # Here is the map of users and theirs object ids. 
   # This step is optional, in case of Service Principal assignment to workspace, 
   # please only required to provide APP ID as it's value
@@ -112,12 +104,8 @@ module "databricks_runtime_premium" {
   
   # Workspace admins
   workspace_admins = {
-    user = [
-      "user1@example.com"
-    ]
-    service_principal = [
-      "example-app-id"
-    ]
+    user = ["user1@example.com"]
+    service_principal = ["example-app-id"]
   }
   
   # Custom Workspace group with assigned users/service_principals.
@@ -130,13 +118,16 @@ module "databricks_runtime_premium" {
       ]
     "service_principal" = []
     entitlements = ["allow_instance_pool_create","allow_cluster_create","databricks_sql_access"]
-    default_cluster_permission = "CAN_RESTART" # assigns certain permission on default cluster to created group
     }
   }
-    
-  # Assigns acls on secret scope to a custom group ("DEVELOPERS" in this example) 
-  secret_scope_object     = module.databricks_runtime_core.secret_scope_object
   
+  # Additional Secret Scope
+  secret_scope = [{
+    scope_name = "extra-scope"
+    acl        = [{ principal = "DEVELOPERS", permission = "READ" }] # Only custom workspace group names are allowed. If left empty then only Workspace admins could access these keys
+    secrets    = [{ key = "secret-name", string_value = "secret-value"}]
+  }]
+
   providers = {
     databricks = databricks.main
   }
@@ -236,13 +227,16 @@ module "databricks_runtime_premium" {
 
   # Permissions
   workspace_admins = {
-    user = [
-      "user1@example.com",
-    ]
-    service_principal = [
-      "example-app-id"
-    ]
+    user = ["user1@example.com"]
+    service_principal = ["example-app-id"]
   }
+
+  # Cluster for Unity Catalog access
+  databricks_cluster_configs = [{
+    cluster_name       = "Unity Catalog"
+    availability       = "SPOT_AZURE"
+    spot_bid_max_price = -1
+  }]
   
   providers = {
     databricks = databricks.main
@@ -290,7 +284,8 @@ No modules.
 | [azurerm_key_vault_secret.sp_client_id](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secret)                        | data     |
 | [azurerm_key_vault_secret.sp_key](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secret)                              | data     |
 | [azurerm_key_vault_secret.tenant_id](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secret)                           | data     |
-| [databricks_workspace_conf.this](https://registry.terraform.io/providers/databricks/databricks/latest/docs/resources/workspace_conf)                                | resource |
+| [databricks_workspace_conf.pat](https://registry.terraform.io/providers/databricks/databricks/latest/docs/resources/workspace_conf)                                 | resource |
+| [databricks_token.pat](https://registry.terraform.io/providers/databricks/databricks/latest/docs/resources/token)                                                   | resource |
 | [databricks_ip_access_list.this](https://registry.terraform.io/providers/databricks/databricks/latest/docs/resources/ip_access_list)                                | resource |
 | [databricks_sql_global_config.this](https://registry.terraform.io/providers/databricks/databricks/latest/docs/resources/sql_global_config)                          | resource |
 | [databricks_sql_endpoint.this](https://registry.terraform.io/providers/databricks/databricks/latest/docs/resources/sql_endpoint)                                    | resource |
@@ -332,15 +327,15 @@ No modules.
 | <a name="input_suffix"></a> [suffix](#input\_suffix)                                                                      | Optional suffix that would be added to the end of resources names.                                                                                                             | `string`                                                                                                                                                                                                                                                                                                                                                                                          | " "                                                                                                                                                                                                                                                                     |    no    |
 | <a name="input_external_metastore_id"></a> [external\_metastore\_id](#input\_external\_metastore\_id)                     | Unity Catalog Metastore Id that is located in separate environment. Provide this value to associate Databricks Workspace with target Metastore                                 | `string`                                                                                                                                                                                                                                                                                                                                                                                          | " "                                                                                                                                                                                                                                                                     |    no    |
 | <a name="input_metastore_grants"></a> [metastore\_grants](#input\_metastore\_grants)                                      | Permissions to give on metastore to group                                                                                                                                      | `map(list(string))`                                                                                                                                                                                                                                                                                                                                                                               | {}                                                                                                                                                                                                                                                                      |    no    |
-| <a name="input_secret_scope_object"></a> [secret\_scope\_object](#input\_secret\_scope\_object)                           | List of objects, where 'scope_name' param is a Secret scope name and 'acl' are list of objects with 'principals' and one of allowed 'permission' ('READ', 'WRITE' or 'MANAGE') | <pre>list(object({<br> scope_name = string<br> acl = list(object({<br>   principal  = string<br>   permission = string<br>   }))<br>}))</pre>                                                                                                                                                                                                                                                     | <pre>[{<br>  scope_name = null<br>  acl        = null<br>}]</pre>                                                                                                                                                                                                       |    no    |
 | <a name="input_sp_client_id_secret_name"></a> [sp\_client\_id\_secret\_name](#input\_sp\_client\_id\_secret\_name)  | The name of Azure Key Vault secret that contains ClientID of Service Principal to access in Azure Key Vault   | `string` | n/a | yes |
 | <a name="input_sp_key_secret_name"></a> [sp\_key\_secret\_name](#input\_sp\_key\_secret\_name)  | The name of Azure Key Vault secret that contains client secret of Service Principal to access in Azure Key Vault   | `string` | n/a | yes |
 | <a name="input_secret_scope"></a> [secret\_scope](#input\_secret\_scope)  | Provides an ability to create custom Secret Scope, store secrets in it and assigning ACL for access management   | <pre>list(object({<br>  scope_name = string<br>  acl = optional(list(object({<br>    principal  = string<br>    permission = string<br>  })))<br>  secrets = optional(list(object({<br>    key          = string<br>    string_value = string<br>  })))<br>}))<br></pre> | <pre>default = [{<br>  scope_name = null<br>  acl        = null<br>  secrets    = null<br>}]<br></pre> | yes |
 | <a name="input_key_vault_id"></a> [key\_vault\_id](#input\_key\_vault\_id)  | ID of the Key Vault instance where the Secret resides | `string` | n/a | yes |
 | <a name="input_tenant_id_secret_name"></a> [tenant\_id\_secret\_name](#input\_tenant\_id\_secret\_name)  | The name of Azure Key Vault secret that contains tenant ID secret of Service Principal to access in Azure Key Vault | `string` | n/a | yes |
 | <a name="input_mountpoints"></a> [mountpoints](#input\_mountpoints)  | Mountpoints for databricks | <pre>map(object({<br>  storage_account_name = string<br>  container_name       = string<br>}))<br></pre> |{}| no |
-| <a name="input_custom_cluster_policies"></a> [custom\_cluster\_policies](#input\_custom\_cluster\_policies)  | Provides an ability to create custom cluster policy, assign it to cluster and grant CAN_USE permissions on it to certain custom groups | <pre>list(object({<br>  name       = string<br>  can_use    = list(string)<br>  definition = any<br>  assigned   = bool<br>}))<br></pre> |<pre>[{<br>  name       = null<br>  can_use    = null<br>  definition = null<br>  assigned   = false<br>}]<br></pre>| no |
+| <a name="input_custom_cluster_policies"></a> [custom\_cluster\_policies](#input\_custom\_cluster\_policies)  | Provides an ability to create custom cluster policy, assign it to cluster and grant CAN_USE permissions on it to certain custom groups | <pre>list(object({<br>  name       = string<br>  can_use    = list(string)<br>  definition = any<br>}))<br></pre> |<pre>[{<br>  name       = null<br>  can_use    = null<br>  definition = null<br>}]<br></pre>| no |
 | <a name="input_clusters"></a> [clusters](#input\_clusters)  | Set of objects with parameters to configure Databricks clusters and assign permissions to it for certain custom groups  | <pre>set(object({<br>    cluster_name                 = string<br>    spark_version                = optional(string)<br>    spark_conf                   = optional(map(any))<br>    spark_env_vars               = optional(map(any))<br>    data_security_mode           = optional(string)<br>    node_type_id                 = optional(string)<br>    autotermination_minutes      = optional(number)<br>    min_workers                  = optional(number)<br>    max_workers                  = optional(number)<br>    max_workers                  = optional(number)<br>    availability                 = optional(string)<br>    first_on_demand              = optional(number)<br>    spot_bid_max_price           = optional(number)<br>    cluster_log_conf_destination = optional(string)<br>    permissions = optional(set(object({<br>      group_name       = string<br>      permission_level = string<br>    })), [])<br>}))<br></pre> | <pre>set(object({<br>    cluster_name                 = string<br>    spark_version                = optional(string, "11.3.x-scala2.12")<br>    spark_conf                   = optional(map(any), {})<br>    spark_env_vars               = optional(map(any), {})<br>    data_security_mode           = optional(string, "USER_ISOLATION")<br>    node_type_id                 = optional(string, "Standard_D3_v2")<br>    autotermination_minutes      = optional(number, 30)<br>    min_workers                  = optional(number, 1)<br>    max_workers                  = optional(number, 2)<br>    max_workers                  = optional(number, 2)<br>    availability                 = optional(string, "ON_DEMAND_AZURE")<br>    first_on_demand              = optional(number, 0)<br>    spot_bid_max_price           = optional(number, 1)<br>    cluster_log_conf_destination = optional(string, null)<br>    permissions = optional(set(object({<br>      group_name       = string<br>      permission_level = string<br>    })), [])<br>}))<br></pre> | no |
+| <a name="input_pat_token_lifetime_seconds"></a> [pat\_token\_lifetime\_seconds](#input\_pat\_token\_lifetime\_seconds)  | The lifetime of the token, in seconds. If no lifetime is specified, the token remains valid indefinitely |    `number`  | 315569520 |   no    |
 
 
 
@@ -351,6 +346,7 @@ No modules.
 | <a name="output_sql_endpoint_jdbc_url"></a> [sql\_endpoint\_jdbc\_url](#output\_sql\_endpoint\_jdbc\_url)                     | JDBC connection string of SQL Endpoint  |
 | <a name="output_sql_endpoint_data_source_id"></a> [sql\_endpoint\_data\_source\_id](#output\_sql\_endpoint\_data\_source\_id) | ID of the data source for this endpoint |
 | <a name="output_metastore_id"></a> [metastore\_id](#output\_metastore\_id)                                                    | Unity Catalog Metastore Id              |
+| <a name="output_token"></a> [token](#output\_token)                                                                           | Databricks Personal Authorization Token |
 <!-- END_TF_DOCS -->
 
 ## License

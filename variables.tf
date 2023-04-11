@@ -45,10 +45,9 @@ variable "workspace_admins" {
 
 variable "iam" {
   type = map(object({
-    user                       = optional(list(string))
-    service_principal          = optional(list(string))
-    entitlements               = optional(list(string))
-    default_cluster_permission = optional(string)
+    user              = optional(list(string))
+    service_principal = optional(list(string))
+    entitlements      = optional(list(string))
   }))
   description = "Used to create workspace group. Map of group name and its parameters, such as users and service principals added to the group. Also possible to configure group entitlements."
   default     = {}
@@ -150,22 +149,6 @@ variable "metastore_grants" {
   }
 }
 
-# Secret Scope ACLs variables
-variable "secret_scope_object" {
-  type = list(object({
-    scope_name = string
-    acl = list(object({
-      principal  = string
-      permission = string
-    }))
-  }))
-  description = "List of objects, where 'scope_name' param is a Secret scope name and 'acl' are list of objects with 'principals' and one of allowed 'permission' ('READ', 'WRITE' or 'MANAGE')"
-  default = [{
-    scope_name = null
-    acl        = null
-  }]
-}
-
 variable "sp_client_id_secret_name" {
   type        = string
   description = "The name of Azure Key Vault secret that contains ClientID of Service Principal to access in Azure Key Vault"
@@ -226,25 +209,18 @@ variable "custom_cluster_policies" {
     name       = string
     can_use    = list(string)
     definition = any
-    assigned   = bool
   }))
   description = <<-EOT
 Provides an ability to create custom cluster policy, assign it to cluster and grant CAN_USE permissions on it to certain custom groups
 name - name of custom cluster policy to create
 can_use - list of string, where values are custom group names, there groups have to be created with Terraform;
 definition - JSON document expressed in Databricks Policy Definition Language. No need to call 'jsonencode()' function on it when providing a value;
-assigned - boolean flag which assigns policy to default 'shared autoscaling' cluster, only single custom policy could be assigned;
 EOT
   default = [{
     name       = null
     can_use    = null
     definition = null
-    assigned   = false
   }]
-  validation {
-    condition     = length([for policy in var.custom_cluster_policies : policy.assigned if policy.assigned]) <= 1
-    error_message = "Only single cluster policy assignment allowed. Please set 'assigned' parameter to 'true' for exact one or none policy"
-  }
 }
 
 variable "clusters" {
@@ -269,4 +245,10 @@ variable "clusters" {
   }))
   description = "Set of objects with parameters to configure Databricks clusters and assign permissions to it for certain custom groups"
   default     = []
+}
+
+variable "pat_token_lifetime_seconds" {
+  type        = number
+  description = "The lifetime of the token, in seconds. If no lifetime is specified, the token remains valid indefinitely"
+  default     = 315569520
 }

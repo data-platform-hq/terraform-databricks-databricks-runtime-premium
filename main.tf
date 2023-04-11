@@ -26,6 +26,11 @@ resource "databricks_workspace_conf" "this" {
   }
 }
 
+resource "databricks_token" "pat" {
+  comment          = "Terraform Provisioning"
+  lifetime_seconds = var.pat_token_lifetime_seconds
+}
+
 resource "databricks_ip_access_list" "this" {
   count = local.ip_rules == null ? 0 : 1
 
