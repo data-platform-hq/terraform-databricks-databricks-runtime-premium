@@ -17,3 +17,11 @@ output "token" {
   value       = databricks_token.pat.token_value
   description = "Databricks Personal Authorization Token"
 }
+
+output "clusters" {
+  value = [for param in var.clusters : {
+    name = param.cluster_name
+    id   = databricks_cluster.cluster[param.cluster_name].id
+  } if length(var.clusters) != 0]
+  description = "Provides name and unique identifier for the clusters"
+}
