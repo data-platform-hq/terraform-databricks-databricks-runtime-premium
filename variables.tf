@@ -228,6 +228,7 @@ variable "clusters" {
     cluster_name                 = string
     spark_version                = optional(string, "11.3.x-scala2.12")
     spark_conf                   = optional(map(any), {})
+    enabled_adls_passthrought    = optional(bool, false)
     spark_env_vars               = optional(map(any), {})
     data_security_mode           = optional(string, "USER_ISOLATION")
     node_type_id                 = optional(string, "Standard_D3_v2")
@@ -251,4 +252,10 @@ variable "pat_token_lifetime_seconds" {
   type        = number
   description = "The lifetime of the token, in seconds. If no lifetime is specified, the token remains valid indefinitely"
   default     = 315569520
+}
+
+variable "mount_adls_passthrough" {
+  type        = bool
+  description = "Boolean flag for Unity Catalog Metastore current in this environment. One Metastore per region"
+  default     = false
 }

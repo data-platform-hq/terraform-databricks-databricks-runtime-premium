@@ -16,4 +16,5 @@ output "metastore_id" {
 output "token" {
   value       = databricks_token.pat.token_value
   description = "Databricks Personal Authorization Token"
+  sensitive = true
 }

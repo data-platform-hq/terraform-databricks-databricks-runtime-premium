@@ -3,7 +3,13 @@ resource "databricks_cluster" "cluster" {
 
   cluster_name            = each.value.cluster_name
   spark_version           = each.value.spark_version
-  spark_conf              = each.value.spark_conf
+  spark_conf              = each.value.enabled_adls_passthrought ? merge(each.value.spark_conf,
+    {
+      "spark.databricks.cluster.profile" : "serverless",
+      "spark.databricks.repl.allowedLanguages" : "python,sql",
+      "spark.databricks.passthrough.enabled" : "true",
+      "spark.databricks.pyspark.enableProcessIsolation" : "true"
+    }) : each.value.spark_conf
   spark_env_vars          = each.value.spark_env_vars
   data_security_mode      = each.value.data_security_mode
   node_type_id            = each.value.node_type_id
