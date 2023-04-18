@@ -1,3 +1,10 @@
+## [1.7.2](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.7.1...v1.7.2) (2023-04-13)
+
+
+### Bug Fixes
+
+* added output which provides name and id for clusters ([0fa4e44](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/0fa4e4476a9b5f5d8411c08595218fc3619d3478))
+
 ## [1.7.1](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.7.0...v1.7.1) (2023-04-11)
 
 
