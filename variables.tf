@@ -228,7 +228,7 @@ variable "clusters" {
     cluster_name                 = string
     spark_version                = optional(string, "11.3.x-scala2.12")
     spark_conf                   = optional(map(any), {})
-    enabled_adls_passthrought    = optional(bool, false)
+    cluster_conf_passthrought    = optional(bool, false)
     spark_env_vars               = optional(map(any), {})
     data_security_mode           = optional(string, "USER_ISOLATION")
     node_type_id                 = optional(string, "Standard_D3_v2")
