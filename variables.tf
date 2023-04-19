@@ -256,6 +256,6 @@ variable "pat_token_lifetime_seconds" {
 
 variable "mount_adls_passthrough" {
   type        = bool
-  description = "Boolean flag for Unity Catalog Metastore current in this environment. One Metastore per region"
+  description = "Boolean flag to use mount options for credentals passthrough"
   default     = false
 }
