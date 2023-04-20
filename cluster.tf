@@ -1,11 +1,16 @@
 resource "databricks_cluster" "cluster" {
   for_each = { for cluster in var.clusters : cluster.cluster_name => cluster }
 
-  cluster_name            = each.value.cluster_name
-  spark_version           = each.value.spark_version
-  spark_conf              = each.value.spark_conf
+  cluster_name  = each.value.cluster_name
+  spark_version = each.value.spark_version
+  spark_conf = each.value.cluster_conf_passthrought ? merge({
+    "spark.databricks.cluster.profile" : "serverless",
+    "spark.databricks.repl.allowedLanguages" : "python,sql",
+    "spark.databricks.passthrough.enabled" : "true",
+    "spark.databricks.pyspark.enableProcessIsolation" : "true"
+  }, each.value.spark_conf) : each.value.spark_conf
   spark_env_vars          = each.value.spark_env_vars
-  data_security_mode      = each.value.data_security_mode
+  data_security_mode      = each.value.cluster_conf_passthrought ? null : each.value.data_security_mode
   node_type_id            = each.value.node_type_id
   autotermination_minutes = each.value.autotermination_minutes
 

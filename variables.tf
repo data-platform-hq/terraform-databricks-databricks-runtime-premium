@@ -228,6 +228,7 @@ variable "clusters" {
     cluster_name                 = string
     spark_version                = optional(string, "11.3.x-scala2.12")
     spark_conf                   = optional(map(any), {})
+    cluster_conf_passthrought    = optional(bool, false)
     spark_env_vars               = optional(map(any), {})
     data_security_mode           = optional(string, "USER_ISOLATION")
     node_type_id                 = optional(string, "Standard_D3_v2")
@@ -251,4 +252,16 @@ variable "pat_token_lifetime_seconds" {
   type        = number
   description = "The lifetime of the token, in seconds. If no lifetime is specified, the token remains valid indefinitely"
   default     = 315569520
+}
+
+variable "mount_adls_passthrough" {
+  type        = bool
+  description = "Boolean flag to use mount options for credentals passthrough. Should be used with mount_cluster_name, specified cluster should have option cluster_conf_passthrought == true"
+  default     = false
+}
+
+variable "mount_cluster_name" {
+  type        = string
+  description = "Name of the cluster that will be used during storage mounting. If mount_adls_passthrough == true, cluster should also have option cluster_conf_passthrought == true"
+  default     = null
 }
