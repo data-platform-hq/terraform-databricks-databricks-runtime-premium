@@ -256,6 +256,12 @@ variable "pat_token_lifetime_seconds" {
 
 variable "mount_adls_passthrough" {
   type        = bool
-  description = "Boolean flag to use mount options for credentals passthrough"
+  description = "Boolean flag to use mount options for credentals passthrough. Should be used with mount_cluster_name, specified cluster should have option cluster_conf_passthrought == true"
   default     = false
+}
+
+variable "mount_cluster_name" {
+  type        = string
+  description = "Name of the cluster that will be used during storage mounting. If mount_adls_passthrough == true, cluster should also have option cluster_conf_passthrought == true"
+  default     = null
 }
