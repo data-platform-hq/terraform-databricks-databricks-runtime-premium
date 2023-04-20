@@ -1,3 +1,17 @@
+# [1.8.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.7.2...v1.8.0) (2023-04-20)
+
+
+### Bug Fixes
+
+* changed default value, var name, formatting ([e1ff063](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/e1ff0630d06a6e5a054ab66a191dc158d8edbdc8))
+* fixed formatting ([430e3f4](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/430e3f469c336202eb53d6266f524567c61c1174))
+
+
+### Features
+
+* added cluster name option to use during mount ([41d0f5f](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/41d0f5fc5a10861c998666022fa514c8cc9f0e56))
+* added credential passthrough ([4cfee37](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/4cfee370f3384d415c90468f8023db3f1aada641))
+
 ## [1.7.2](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.7.1...v1.7.2) (2023-04-13)
 
 
