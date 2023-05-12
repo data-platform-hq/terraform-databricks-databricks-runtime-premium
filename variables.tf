@@ -43,6 +43,17 @@ variable "workspace_admins" {
   }
 }
 
+variable "account_groups" {
+  type = list(object({
+    name         = string
+    entitlements = optional(list(string))
+    cluster_name = optional(string)
+    permission   = optional(string)
+  }))
+  description = "List of objects with group name and entitlements for this group, cluster name to which should be added group and permissions for this group in cluster"
+  default     = []
+}
+
 variable "iam" {
   type = map(object({
     user              = optional(list(string))

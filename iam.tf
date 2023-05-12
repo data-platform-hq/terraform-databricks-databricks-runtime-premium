@@ -19,6 +19,14 @@ locals {
       }] if params.service_principal != null
     ])
   )
+  account_groups = { for group in var.account_groups : group.name => group if group.name != null }
+  iam_map        = length(var.iam) != 0 ? { for group, params in var.iam : group => params if length(var.account_groups) == 0 } : {}
+}
+
+data "databricks_group" "account_groups" {
+  for_each = local.account_groups
+
+  display_name = each.key
 }
 
 data "databricks_group" "admin" {
@@ -26,7 +34,7 @@ data "databricks_group" "admin" {
 }
 
 resource "databricks_group" "this" {
-  for_each = toset(keys(var.iam))
+  for_each = length(local.account_groups) != 0 ? [] : toset(keys(var.iam))
 
   display_name = each.key
   lifecycle { ignore_changes = [external_id, allow_cluster_create, allow_instance_pool_create, databricks_sql_access, workspace_access] }
@@ -54,14 +62,14 @@ resource "databricks_service_principal" "this" {
 }
 
 resource "databricks_group_member" "admin" {
-  for_each = merge(local.admin_user_map, local.admin_sp_map)
+  for_each = length(local.account_groups) != 0 ? {} : merge(local.admin_user_map, local.admin_sp_map)
 
   group_id  = data.databricks_group.admin.id
   member_id = startswith(each.key, "user") ? databricks_user.this[each.value].id : databricks_service_principal.this[each.value].id
 }
 
 resource "databricks_group_member" "this" {
-  for_each = {
+  for_each = length(local.account_groups) != 0 ? {} : {
     for entry in local.members_object_list : "${entry.type}.${entry.group}.${entry.member}" => entry
   }
 
@@ -70,11 +78,9 @@ resource "databricks_group_member" "this" {
 }
 
 resource "databricks_entitlements" "this" {
-  for_each = {
-    for group, params in var.iam : group => params
-  }
+  for_each = merge(local.account_groups, local.iam_map)
 
-  group_id                   = databricks_group.this[each.key].id
+  group_id                   = length(local.account_groups) != 0 ? data.databricks_group.account_groups[each.key].id : databricks_group.this[each.key].id
   allow_cluster_create       = contains(coalesce(each.value.entitlements, ["none"]), "allow_cluster_create")
   allow_instance_pool_create = contains(coalesce(each.value.entitlements, ["none"]), "allow_instance_pool_create")
   databricks_sql_access      = contains(coalesce(each.value.entitlements, ["none"]), "databricks_sql_access")
