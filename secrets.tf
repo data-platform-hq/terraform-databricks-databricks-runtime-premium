@@ -44,31 +44,27 @@ resource "databricks_secret" "this" {
   scope        = databricks_secret_scope.this[each.value.scope_name].id
 }
 
-# At the nearest future, Azure will allow acquiring AAD tokens by service principals,
-# thus providing an ability to create Azure backed Key Vault with Terraform
-# https://github.com/databricks/terraform-provider-databricks/pull/1965
+# Azure Key Vault-backed Scope
+resource "azurerm_key_vault_access_policy" "databricks" {
+  count = var.key_vault_secret_scope.key_vault_id != null ? 1 : 0
 
-## Azure Key Vault-backed Scope
-#resource "azurerm_key_vault_access_policy" "databricks" {
-#  count = var.key_vault_secret_scope.key_vault_id != null ? 1 : 0
+  key_vault_id = var.key_vault_secret_scope.key_vault_id
+  object_id    = "9b38785a-6e08-4087-a0c4-20634343f21f" # Global 'AzureDatabricks' SP object id
+  tenant_id    = data.azurerm_key_vault_secret.tenant_id.value
 
-#  key_vault_id = var.key_vault_secret_scope.key_vault_id
-#  object_id    = "9b38785a-6e08-4087-a0c4-20634343f21f" # Global 'AzureDatabricks' SP object id
-#  tenant_id    = data.azurerm_key_vault_secret.tenant_id.value
-#
-#  secret_permissions = [
-#    "Get",
-#    "List",
-#  ]
-#}
-#
-#resource "databricks_secret_scope" "external" {
-#  count = var.key_vault_secret_scope.key_vault_id != null ? 1 : 0
-#
-#  name = "external"
-#  keyvault_metadata {
-#    resource_id = var.key_vault_secret_scope.key_vault_id
-#    dns_name    = var.key_vault_secret_scope.dns_name
-#  }
-#  depends_on = [azurerm_key_vault_access_policy.databricks]
-#}
+  secret_permissions = [
+    "Get",
+    "List",
+  ]
+}
+
+resource "databricks_secret_scope" "external" {
+  count = var.key_vault_secret_scope.key_vault_id != null ? 1 : 0
+
+  name = "external"
+  keyvault_metadata {
+    resource_id = var.key_vault_secret_scope.key_vault_id
+    dns_name    = var.key_vault_secret_scope.dns_name
+  }
+  depends_on = [azurerm_key_vault_access_policy.databricks]
+}

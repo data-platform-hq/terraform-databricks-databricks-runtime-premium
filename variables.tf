@@ -265,3 +265,15 @@ variable "mount_cluster_name" {
   description = "Name of the cluster that will be used during storage mounting. If mount_adls_passthrough == true, cluster should also have option cluster_conf_passthrought == true"
   default     = null
 }
+
+variable "key_vault_secret_scope" {
+  type = object({
+    key_vault_id = string
+    dns_name     = string
+  })
+  description = "Object with Azure Key Vault parameters required for creation of Azure-backed Databricks Secret scope"
+  default = {
+    key_vault_id = null
+    dns_name     = null
+  }
+}
