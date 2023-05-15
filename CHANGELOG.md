@@ -1,3 +1,15 @@
+# [1.9.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.8.0...v1.9.0) (2023-05-15)
+
+
+### Bug Fixes
+
+* terraform fmt ([dd85f6b](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/dd85f6ba52133fd50deb766f3ab90ebc15868b7d))
+
+
+### Features
+
+* Azure-backed Databricks Secret scope ([4c1f7d4](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/4c1f7d472000de44bf7a33a4a0193be42e899f98))
+
 # [1.8.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.7.2...v1.8.0) (2023-04-20)
 
 
