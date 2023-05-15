@@ -271,7 +271,7 @@ variable "key_vault_secret_scope" {
     key_vault_id = string
     dns_name     = string
   })
- description = "Object with Azure Key Vault parameters required for creation of Azure-backed Databricks Secret scope"
+  description = "Object with Azure Key Vault parameters required for creation of Azure-backed Databricks Secret scope"
   default = {
     key_vault_id = null
     dns_name     = null
