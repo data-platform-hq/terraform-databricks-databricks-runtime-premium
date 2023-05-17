@@ -104,7 +104,7 @@ variable "storage_account_name" {
   description = "Storage Account Name where Unity Catalog Metastore would be provisioned"
   default     = ""
 }
-
+/*
 variable "catalog" {
   type = map(object({
     catalog_grants     = optional(map(list(string)))
@@ -118,7 +118,7 @@ variable "catalog" {
   description = "Map of catalog name and its parameters"
   default     = {}
 }
-
+*/
 variable "suffix" {
   type        = string
   description = "Optional suffix that would be added to the end of resources names."
