@@ -1,18 +1,3 @@
-variable "project" {
-  type        = string
-  description = "Project name"
-}
-
-variable "env" {
-  type        = string
-  description = "Environment name"
-}
-
-variable "location" {
-  type        = string
-  description = "Azure location"
-}
-
 variable "workspace_id" {
   type        = string
   description = "Id of Azure Databricks workspace"
@@ -79,44 +64,6 @@ variable "sql_endpoint" {
   }))
   description = "Set of objects with parameters to configure SQL Endpoint and assign permissions to it for certain custom groups"
   default     = []
-}
-
-# Unity Catalog variables
-variable "create_metastore" {
-  type        = bool
-  description = "Boolean flag for Unity Catalog Metastore current in this environment. One Metastore per region"
-  default     = false
-}
-
-variable "access_connector_id" {
-  type        = string
-  description = "Databricks Access Connector Id that lets you to connect managed identities to an Azure Databricks account. Provides an ability to access Unity Catalog with assigned identity"
-  default     = ""
-}
-
-variable "storage_account_id" {
-  type        = string
-  description = "Storage Account Id where Unity Catalog Metastore would be provisioned"
-  default     = ""
-}
-variable "storage_account_name" {
-  type        = string
-  description = "Storage Account Name where Unity Catalog Metastore would be provisioned"
-  default     = ""
-}
-
-variable "catalog" {
-  type = map(object({
-    catalog_grants     = optional(map(list(string)))
-    catalog_comment    = optional(string)
-    catalog_properties = optional(map(string))
-    schema_name        = optional(list(string))
-    schema_grants      = optional(map(list(string)))
-    schema_comment     = optional(string)
-    schema_properties  = optional(map(string))
-  }))
-  description = "Map of catalog name and its parameters"
-  default     = {}
 }
 
 variable "suffix" {
