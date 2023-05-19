@@ -1,6 +1,7 @@
 {
     "branches": [
         "main",
+        "remove_unity",
         "master"
     ],
     "ci": true,
