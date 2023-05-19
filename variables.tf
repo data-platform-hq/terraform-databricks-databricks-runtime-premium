@@ -72,30 +72,6 @@ variable "suffix" {
   default     = ""
 }
 
-variable "external_metastore_id" {
-  type        = string
-  description = "Unity Catalog Metastore Id that is located in separate environment. Provide this value to associate Databricks Workspace with target Metastore"
-  default     = ""
-  validation {
-    condition     = length(var.external_metastore_id) == 36 || length(var.external_metastore_id) == 0
-    error_message = "UUID has to be either in nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn format or empty string"
-  }
-}
-
-variable "metastore_grants" {
-  type        = map(list(string))
-  description = "Permissions to give on metastore to group"
-  default     = {}
-  validation {
-    condition = values(var.metastore_grants) != null ? alltrue([
-      for item in toset(flatten([for group, params in var.metastore_grants : params if params != null])) : contains([
-        "CREATE_CATALOG", "CREATE_EXTERNAL_LOCATION", "CREATE_SHARE", "CREATE_RECIPIENT", "CREATE_PROVIDER"
-      ], item)
-    ]) : true
-    error_message = "Metastore permission validation. The only possible values for permissions are: CREATE_CATALOG, CREATE_EXTERNAL_LOCATION, CREATE_SHARE, CREATE_RECIPIENT, CREATE_PROVIDER"
-  }
-}
-
 variable "sp_client_id_secret_name" {
   type        = string
   description = "The name of Azure Key Vault secret that contains ClientID of Service Principal to access in Azure Key Vault"
@@ -149,6 +125,23 @@ variable "mountpoints" {
   }))
   description = "Mountpoints for databricks"
   default     = {}
+}
+
+# Unity Catalog Metastore assignment variables
+variable "assign_unity_catalog_metastore" {
+  type        = bool
+  description = "Boolean flag provides an ability to assign Unity Catalog Metastore to this Workspace"
+  default     = false
+}
+
+variable "external_metastore_id" {
+  type        = string
+  description = "Unity Catalog Metastore Id that is located in separate environment. Provide this value to associate Databricks Workspace with target Metastore"
+  default     = ""
+  validation {
+    condition     = anytrue([length(var.external_metastore_id) == 36, length(var.external_metastore_id) == 0])
+    error_message = "UUID has to be either in nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn format or empty string"
+  }
 }
 
 variable "custom_cluster_policies" {
