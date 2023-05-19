@@ -43,18 +43,16 @@ variable "workspace_admins" {
   }
 }
 
-variable "account_groups" {
+variable "iam_account_groups" {
   type = list(object({
-    name         = string
+    group_name   = optional(string)
     entitlements = optional(list(string))
-    cluster_name = optional(string)
-    permission   = optional(string)
   }))
-  description = "List of objects with group name and entitlements for this group, cluster name to which should be added group and permissions for this group in cluster"
+  description = "List of objects with group name and entitlements for this group"
   default     = []
 }
 
-variable "iam" {
+variable "iam_workspace_groups" {
   type = map(object({
     user              = optional(list(string))
     service_principal = optional(list(string))
@@ -64,8 +62,8 @@ variable "iam" {
   default     = {}
 
   validation {
-    condition = length([for item in values(var.iam)[*] : item.entitlements if item.entitlements != null]) != 0 ? alltrue([
-      for entry in flatten(values(var.iam)[*].entitlements) : contains(["allow_cluster_create", "allow_instance_pool_create", "databricks_sql_access"], entry) if entry != null
+    condition = length([for item in values(var.iam_workspace_groups)[*] : item.entitlements if item.entitlements != null]) != 0 ? alltrue([
+      for entry in flatten(values(var.iam_workspace_groups)[*].entitlements) : contains(["allow_cluster_create", "allow_instance_pool_create", "databricks_sql_access"], entry) if entry != null
     ]) : true
     error_message = "Entitlements validation. The only suitable values are: databricks_sql_access, allow_instance_pool_create, allow_cluster_create"
   }

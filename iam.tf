@@ -8,33 +8,42 @@ locals {
   }
 
   members_object_list = concat(
-    flatten([for group, params in var.iam : [
+    flatten([for group, params in var.iam_workspace_groups : [
       for pair in setproduct([group], params.user) : {
         type = "user", group = pair[0], member = pair[1]
       }] if params.user != null
     ]),
-    flatten([for group, params in var.iam : [
+    flatten([for group, params in var.iam_workspace_groups : [
       for pair in setproduct([group], params.service_principal) : {
         type = "service_principal", group = pair[0], member = pair[1]
       }] if params.service_principal != null
     ])
   )
-  account_groups = { for group in var.account_groups : group.name => group if group.name != null }
-  iam_map        = length(var.iam) != 0 ? { for group, params in var.iam : group => params if length(var.account_groups) == 0 } : {}
+
+  iam_account_map = tomap({
+    for group in var.iam_account_groups : group.group_name => group.entitlements
+    if group.group_name != null
+  })
+
+  iam_workspace_map = {
+    for group, params in var.iam_workspace_groups : group => params.entitlements
+  }
 }
 
 data "databricks_group" "account_groups" {
-  for_each = local.account_groups
+  for_each = local.iam_account_map
 
   display_name = each.key
 }
 
 data "databricks_group" "admin" {
+  count = length(local.iam_account_map) != 0 ? 0 : 1
+
   display_name = "admins"
 }
 
 resource "databricks_group" "this" {
-  for_each = length(local.account_groups) != 0 ? [] : toset(keys(var.iam))
+  for_each = length(local.iam_account_map) != 0 ? [] : toset(keys(var.iam_workspace_groups))
 
   display_name = each.key
   lifecycle { ignore_changes = [external_id, allow_cluster_create, allow_instance_pool_create, databricks_sql_access, workspace_access] }
@@ -42,7 +51,7 @@ resource "databricks_group" "this" {
 
 resource "databricks_user" "this" {
   for_each = toset(flatten(concat(
-    values({ for group, member in var.iam : group => member.user if member.user != null }),
+    values({ for group, member in var.iam_workspace_groups : group => member.user if member.user != null }),
     values(local.admin_user_map)
   )))
 
@@ -52,7 +61,7 @@ resource "databricks_user" "this" {
 
 resource "databricks_service_principal" "this" {
   for_each = toset(flatten(concat(
-    values({ for group, member in var.iam : group => member.service_principal if member.service_principal != null }),
+    values({ for group, member in var.iam_workspace_groups : group => member.service_principal if member.service_principal != null }),
     values(local.admin_sp_map)
   )))
 
@@ -62,14 +71,14 @@ resource "databricks_service_principal" "this" {
 }
 
 resource "databricks_group_member" "admin" {
-  for_each = length(local.account_groups) != 0 ? {} : merge(local.admin_user_map, local.admin_sp_map)
+  for_each = length(local.iam_account_map) != 0 ? {} : merge(local.admin_user_map, local.admin_sp_map)
 
-  group_id  = data.databricks_group.admin.id
+  group_id  = data.databricks_group.admin[0].id
   member_id = startswith(each.key, "user") ? databricks_user.this[each.value].id : databricks_service_principal.this[each.value].id
 }
 
 resource "databricks_group_member" "this" {
-  for_each = length(local.account_groups) != 0 ? {} : {
+  for_each = length(local.iam_account_map) != 0 ? {} : {
     for entry in local.members_object_list : "${entry.type}.${entry.group}.${entry.member}" => entry
   }
 
@@ -78,12 +87,12 @@ resource "databricks_group_member" "this" {
 }
 
 resource "databricks_entitlements" "this" {
-  for_each = merge(local.account_groups, local.iam_map)
+  for_each = length(local.iam_account_map) != 0 ? local.iam_account_map : local.iam_workspace_map
 
-  group_id                   = length(local.account_groups) != 0 ? data.databricks_group.account_groups[each.key].id : databricks_group.this[each.key].id
-  allow_cluster_create       = contains(coalesce(each.value.entitlements, ["none"]), "allow_cluster_create")
-  allow_instance_pool_create = contains(coalesce(each.value.entitlements, ["none"]), "allow_instance_pool_create")
-  databricks_sql_access      = contains(coalesce(each.value.entitlements, ["none"]), "databricks_sql_access")
+  group_id                   = length(local.iam_account_map) != 0 ? data.databricks_group.account_groups[each.key].id : databricks_group.this[each.key].id
+  allow_cluster_create       = contains(coalesce(each.value, ["none"]), "allow_cluster_create")
+  allow_instance_pool_create = contains(coalesce(each.value, ["none"]), "allow_instance_pool_create")
+  databricks_sql_access      = contains(coalesce(each.value, ["none"]), "databricks_sql_access")
   workspace_access           = true
 
   depends_on = [databricks_group_member.this]
