@@ -1,11 +1,10 @@
 {
     "branches": [
         "main",
-        "remove_unity",
         "master"
     ],
     "ci": true,
-    "dryRun": true,
+    "dryRun": false,
     "plugins": [
         "@semantic-release/commit-analyzer",
         "@semantic-release/release-notes-generator",
