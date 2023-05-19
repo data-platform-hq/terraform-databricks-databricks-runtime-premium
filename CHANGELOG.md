@@ -1,3 +1,10 @@
+## [1.9.1](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.9.0...v1.9.1) (2023-05-19)
+
+
+### Bug Fixes
+
+* updated varialbes ([280425b](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/280425b29f21fcd45b433a011c61499c20704a93))
+
 # [1.9.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.8.0...v1.9.0) (2023-05-15)
 
 
