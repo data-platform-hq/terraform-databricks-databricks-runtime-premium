@@ -9,6 +9,12 @@ variable "ip_rules" {
   default     = {}
 }
 
+variable "suffix" {
+  type        = string
+  description = "Optional suffix that would be added to the end of resources names."
+  default     = ""
+}
+
 # Identity Access Management variables
 variable "user_object_ids" {
   type        = map(string)
@@ -66,10 +72,14 @@ variable "sql_endpoint" {
   default     = []
 }
 
-variable "suffix" {
+variable "external_metastore_id" {
   type        = string
-  description = "Optional suffix that would be added to the end of resources names."
+  description = "Unity Catalog Metastore Id that is located in separate environment. Provide this value to associate Databricks Workspace with target Metastore"
   default     = ""
+  validation {
+    condition     = anytrue([length(var.external_metastore_id) == 36, length(var.external_metastore_id) == 0])
+    error_message = "UUID has to be either in nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn format or empty string"
+  }
 }
 
 variable "sp_client_id_secret_name" {
@@ -132,16 +142,6 @@ variable "assign_unity_catalog_metastore" {
   type        = bool
   description = "Boolean flag provides an ability to assign Unity Catalog Metastore to this Workspace"
   default     = false
-}
-
-variable "external_metastore_id" {
-  type        = string
-  description = "Unity Catalog Metastore Id that is located in separate environment. Provide this value to associate Databricks Workspace with target Metastore"
-  default     = ""
-  validation {
-    condition     = anytrue([length(var.external_metastore_id) == 36, length(var.external_metastore_id) == 0])
-    error_message = "UUID has to be either in nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn format or empty string"
-  }
 }
 
 variable "custom_cluster_policies" {
