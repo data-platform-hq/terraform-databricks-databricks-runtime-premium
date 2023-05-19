@@ -1,3 +1,21 @@
+# [2.0.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.9.1...v2.0.0) (2023-05-19)
+
+
+### Bug Fixes
+
+* updated variables; and condition ([1285f91](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/1285f91b0d29a7f151e37332683424f421a5e117))
+
+
+### Features
+
+* delete unity catalog ([9d4b70a](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/9d4b70ad24a45ccda642318be7d641f3126bc7a7))
+* delete unity.tf ([94cf091](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/94cf091bf6a3a5ece1e380f7e570f76ef2d914d2))
+
+
+### BREAKING CHANGES
+
+* unity catalog in individual module
+
 ## [1.9.1](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.9.0...v1.9.1) (2023-05-19)
 
 
