@@ -66,3 +66,11 @@ resource "databricks_sql_endpoint" "this" {
   }
   depends_on = [databricks_sql_global_config.this]
 }
+
+resource "databricks_metastore_assignment" "this" {
+  count = alltrue([var.assign_unity_catalog_metastore, length(var.external_metastore_id) != 0]) ? 1 : 0
+
+  workspace_id         = var.workspace_id
+  metastore_id         = var.external_metastore_id
+  default_catalog_name = "hive_metastore"
+}
