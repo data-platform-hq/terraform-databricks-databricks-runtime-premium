@@ -1,3 +1,10 @@
+## [2.0.2](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.0.1...v2.0.2) (2023-05-20)
+
+
+### Bug Fixes
+
+* updated condition for resource permissions ([52abfd1](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/52abfd19cb858dc40170d39e04c8bb4303d2fc7f))
+
 ## [2.0.1](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.0.0...v2.0.1) (2023-05-20)
 
 
