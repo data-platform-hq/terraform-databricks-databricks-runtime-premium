@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.0.0...v2.0.1) (2023-05-20)
+
+
+### Bug Fixes
+
+* added cluster outputs ([0264305](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/0264305b5e9093aea3899d8f6f9472c53167e440))
+
 # [2.0.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v1.9.1...v2.0.0) (2023-05-19)
 
 
