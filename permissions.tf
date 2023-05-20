@@ -17,7 +17,7 @@ resource "databricks_permissions" "clusters" {
   dynamic "access_control" {
     for_each = each.value.permissions
     content {
-      group_name       = length(var.iam_workspace_groups) != 0 ? data.databricks_group.account_groups[access_control.value.group_name].display_name : databricks_group.this[access_control.value.group_name].display_name
+      group_name       = length(var.iam_account_groups) != 0 ? data.databricks_group.account_groups[access_control.value.group_name].display_name : databricks_group.this[access_control.value.group_name].display_name
       permission_level = access_control.value.permission_level
     }
   }
@@ -34,7 +34,7 @@ resource "databricks_permissions" "sql_endpoint" {
   dynamic "access_control" {
     for_each = each.value.permissions
     content {
-      group_name       = length(var.iam_workspace_groups) != 0 ? data.databricks_group.account_groups[access_control.value.group_name].display_name : databricks_group.this[access_control.value.group_name].display_name
+      group_name       = length(var.iam_account_groups) != 0 ? data.databricks_group.account_groups[access_control.value.group_name].display_name : databricks_group.this[access_control.value.group_name].display_name
       permission_level = access_control.value.permission_level
     }
   }
@@ -44,6 +44,6 @@ resource "databricks_secret_acl" "this" {
   for_each = { for entry in local.secrets_acl_objects_list : "${entry.scope}.${entry.principal}.${entry.permission}" => entry }
 
   scope      = databricks_secret_scope.this[each.value.scope].name
-  principal  = length(var.iam_workspace_groups) != 0 ? data.databricks_group.account_groups[each.value.principal].display_name : databricks_group.this[each.value.principal].display_name
+  principal  = length(var.iam_account_groups) != 0 ? data.databricks_group.account_groups[each.value.principal].display_name : databricks_group.this[each.value.principal].display_name
   permission = each.value.permission
 }
