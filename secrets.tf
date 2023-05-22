@@ -72,7 +72,7 @@ resource "databricks_secret_scope" "external" {
 resource "databricks_secret_acl" "external" {
   count = var.key_vault_secret_scope.key_vault_id != null ? 1 : 0
 
-  scope      = databricks_secret_scope.app.external[0].name
+  scope      = databricks_secret_scope.external[0].name
   principal  = "users"
   permission = "READ"
 }
