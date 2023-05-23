@@ -1,3 +1,12 @@
+## [2.0.4](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.0.3...v2.0.4) (2023-05-23)
+
+
+### Bug Fixes
+
+* key vault secret scope fixed ([75a5444](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/75a5444522f66139bf34f504e33d76605cb03660))
+* removed whitespace ([dab2984](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/dab2984b3a369071e85e2e122fbdabcfac31f191))
+* whitespace ([021b5bd](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/021b5bde443e38df9ea3cce747dd3508920d9432))
+
 ## [2.0.3](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.0.2...v2.0.3) (2023-05-23)
 
 
