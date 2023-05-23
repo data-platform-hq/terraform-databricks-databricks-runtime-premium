@@ -132,6 +132,17 @@ variable "key_vault_id" {
   description = "ID of the Key Vault instance where the Secret resides"
 }
 
+# Azure Key Vault-backed Secret Scope
+variable "key_vault_secret_scope" {
+  type = object({
+    name         = optional(string)
+    key_vault_id = optional(string)
+    dns_name     = optional(string)
+  })
+  description = "Object with Azure Key Vault parameters required for creation of Azure-backed Databricks Secret scope"
+  default     = {}
+}
+
 variable "tenant_id_secret_name" {
   type        = string
   description = "The name of Azure Key Vault secret that contains tenant ID secret of Service Principal to access in Azure Key Vault"
@@ -215,14 +226,3 @@ variable "mount_cluster_name" {
   default     = null
 }
 
-variable "key_vault_secret_scope" {
-  type = object({
-    key_vault_id = string
-    dns_name     = string
-  })
-  description = "Object with Azure Key Vault parameters required for creation of Azure-backed Databricks Secret scope"
-  default = {
-    key_vault_id = null
-    dns_name     = null
-  }
-}

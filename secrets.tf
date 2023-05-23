@@ -59,20 +59,26 @@ resource "azurerm_key_vault_access_policy" "databricks" {
 }
 
 resource "databricks_secret_scope" "external" {
-  count = var.key_vault_secret_scope.key_vault_id != null ? 1 : 0
+  for_each = {
+    for param in var.key_vault_secret_scope : (param.name) => param
+    if param.name != null
+  }
 
-  name = "external"
+  name = each.value.name
   keyvault_metadata {
-    resource_id = var.key_vault_secret_scope.key_vault_id
-    dns_name    = var.key_vault_secret_scope.dns_name
+    resource_id = each.value.key_vault_id
+    dns_name    = each.value.dns_name
   }
   depends_on = [azurerm_key_vault_access_policy.databricks]
 }
 
 resource "databricks_secret_acl" "external" {
-  count = var.key_vault_secret_scope.key_vault_id != null ? 1 : 0
+  for_each = {
+    for param in var.key_vault_secret_scope : (param.name) => param
+    if param.name != null
+  }
 
-  scope      = databricks_secret_scope.external[0].name
+  scope      = databricks_secret_scope.external[each.value.name].name
   principal  = "users"
   permission = "READ"
 }
