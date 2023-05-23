@@ -1,3 +1,10 @@
+## [2.0.5](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.0.4...v2.0.5) (2023-05-23)
+
+
+### Bug Fixes
+
+* secrets scope key vault ([7b9dd79](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/7b9dd79ea3172a48461cc23e1a61618d290148c0))
+
 ## [2.0.4](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.0.3...v2.0.4) (2023-05-23)
 
 
