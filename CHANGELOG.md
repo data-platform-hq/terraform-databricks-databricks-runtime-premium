@@ -1,3 +1,11 @@
+## [2.0.3](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.0.2...v2.0.3) (2023-05-23)
+
+
+### Bug Fixes
+
+* added databricks_secret_acl ([2db5b75](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/2db5b75dd728c9d47701d5b5fcbca06cee649bae))
+* changed scope name ([54b07b8](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/54b07b820bb3b970b48cbd01a32a8e9aebda1cd6))
+
 ## [2.0.2](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.0.1...v2.0.2) (2023-05-20)
 
 
