@@ -134,13 +134,13 @@ variable "key_vault_id" {
 
 # Azure Key Vault-backed Secret Scope
 variable "key_vault_secret_scope" {
-  type = object({
+  type = list(object({
     name         = optional(string)
     key_vault_id = optional(string)
     dns_name     = optional(string)
-  })
+  }))
   description = "Object with Azure Key Vault parameters required for creation of Azure-backed Databricks Secret scope"
-  default     = {}
+  default     = []
 }
 
 variable "tenant_id_secret_name" {

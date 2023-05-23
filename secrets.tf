@@ -46,9 +46,12 @@ resource "databricks_secret" "this" {
 
 # Azure Key Vault-backed Scope
 resource "azurerm_key_vault_access_policy" "databricks" {
-  count = var.key_vault_secret_scope.key_vault_id != null ? 1 : 0
+  for_each = {
+    for param in var.key_vault_secret_scope : (param.name) => param
+    if length(param.name) != 0
+  }
 
-  key_vault_id = var.key_vault_secret_scope.key_vault_id
+  key_vault_id = each.value.key_vault_id
   object_id    = "9b38785a-6e08-4087-a0c4-20634343f21f" # Global 'AzureDatabricks' SP object id
   tenant_id    = data.azurerm_key_vault_secret.tenant_id.value
 
@@ -61,7 +64,7 @@ resource "azurerm_key_vault_access_policy" "databricks" {
 resource "databricks_secret_scope" "external" {
   for_each = {
     for param in var.key_vault_secret_scope : (param.name) => param
-    if param.name != null
+    if length(param.name) != 0
   }
 
   name = each.value.name
@@ -75,7 +78,7 @@ resource "databricks_secret_scope" "external" {
 resource "databricks_secret_acl" "external" {
   for_each = {
     for param in var.key_vault_secret_scope : (param.name) => param
-    if param.name != null
+    if length(param.name) != 0
   }
 
   scope      = databricks_secret_scope.external[each.value.name].name
