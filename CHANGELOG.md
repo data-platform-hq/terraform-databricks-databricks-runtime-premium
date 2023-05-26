@@ -1,3 +1,15 @@
+# [2.1.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.0.5...v2.1.0) (2023-05-26)
+
+
+### Bug Fixes
+
+* removed old vars ([bcc36b0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/bcc36b00048dc0c4c50e7871e4fb3e547f0603ff))
+
+
+### Features
+
+* removed metastore assignment resource ([3f0cc78](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/3f0cc783f6ffd233c87cf866fb62746a72687a6c))
+
 ## [2.0.5](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.0.4...v2.0.5) (2023-05-23)
 
 
