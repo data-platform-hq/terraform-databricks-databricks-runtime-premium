@@ -1,8 +1,3 @@
-variable "workspace_id" {
-  type        = string
-  description = "Id of Azure Databricks workspace"
-}
-
 variable "ip_rules" {
   type        = map(string)
   description = "Map of IP addresses permitted for access to DB"
@@ -155,13 +150,6 @@ variable "mountpoints" {
   }))
   description = "Mountpoints for databricks"
   default     = {}
-}
-
-# Unity Catalog Metastore assignment variables
-variable "assign_unity_catalog_metastore" {
-  type        = bool
-  description = "Boolean flag provides an ability to assign Unity Catalog Metastore to this Workspace"
-  default     = false
 }
 
 variable "custom_cluster_policies" {
