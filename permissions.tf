@@ -21,6 +21,13 @@ resource "databricks_permissions" "clusters" {
       permission_level = access_control.value.permission_level
     }
   }
+
+  lifecycle {
+    precondition {
+      condition     = alltrue([for i in each.value.permissions : contains(var.iam_account_groups[*].group_name, i.group_name)])
+      error_message = "Incorrect group_name set for permission cluster settings"
+    }
+  }
 }
 
 resource "databricks_permissions" "sql_endpoint" {
@@ -38,6 +45,13 @@ resource "databricks_permissions" "sql_endpoint" {
       permission_level = access_control.value.permission_level
     }
   }
+
+  lifecycle {
+    precondition {
+      condition     = alltrue([for i in each.value.permissions : contains(var.iam_account_groups[*].group_name, i.group_name)])
+      error_message = "Incorrect group_name set for permission cluster settings"
+    }
+  }
 }
 
 resource "databricks_secret_acl" "this" {
@@ -46,4 +60,11 @@ resource "databricks_secret_acl" "this" {
   scope      = databricks_secret_scope.this[each.value.scope].name
   principal  = length(var.iam_account_groups) != 0 ? data.databricks_group.account_groups[each.value.principal].display_name : databricks_group.this[each.value.principal].display_name
   permission = each.value.permission
+
+  lifecycle {
+    precondition {
+      condition     = alltrue([for i in each.value.permissions : contains(var.iam_account_groups[*].group_name, i.group_name)])
+      error_message = "Incorrect group_name set for permission cluster settings"
+    }
+  }
 }
