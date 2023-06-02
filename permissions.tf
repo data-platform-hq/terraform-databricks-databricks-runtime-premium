@@ -24,8 +24,16 @@ resource "databricks_permissions" "clusters" {
 
   lifecycle {
     precondition {
-      condition     = alltrue([for i in each.value.permissions : contains(var.iam_account_groups[*].group_name, i.group_name)])
-      error_message = "Incorrect group_name set for permission 'databricks_cluster_configs' settings"
+      condition = length(var.iam_account_groups) != 0 ? alltrue([
+        for permission in each.value.permissions : contains(
+          var.iam_account_groups[*].group_name, permission.group_name
+        )
+      ]) : true
+      error_message = <<-EOT
+      Databricks Account group mentioned in 'permissions' parameter of 'cluster_config' variable doesn't exists or wasn't assigned to Workspace.
+      Please make sure provided group exist within Databricks Account and then check if it assigned to target Workspace (look for 'iam_account_groups' variable).
+      These are valid Account Groups on Workspace: ${join(", ", var.iam_account_groups[*].group_name)}
+      EOT
     }
   }
 }
@@ -48,8 +56,16 @@ resource "databricks_permissions" "sql_endpoint" {
 
   lifecycle {
     precondition {
-      condition     = alltrue([for i in each.value.permissions : contains(var.iam_account_groups[*].group_name, i.group_name)])
-      error_message = "Incorrect group_name set for permission 'databricks_sql_endpoint' settings"
+      condition = length(var.iam_account_groups) != 0 ? alltrue([
+        for permission in each.value.permissions : contains(
+          var.iam_account_groups[*].group_name, permission.group_name
+        )
+      ]) : true
+      error_message = <<-EOT
+      Databricks Account group mentioned in 'permissions' parameter of 'sql_endpoint' variable doesn't exists or wasn't assigned to Workspace.
+      Please make sure provided group exist within Databricks Account and then check if it assigned to target Workspace (look for 'iam_account_groups' variable).
+      These are valid Account Groups on Workspace: ${join(", ", var.iam_account_groups[*].group_name)}
+      EOT
     }
   }
 }
@@ -63,8 +79,12 @@ resource "databricks_secret_acl" "this" {
 
   lifecycle {
     precondition {
-      condition     = alltrue([contains(var.iam_account_groups[*].group_name, each.value.principal)])
-      error_message = "Incorrect principal set for acl databricks_secret_scope settings"
+      condition     = length(var.iam_account_groups) != 0 ? contains(var.iam_account_groups[*].group_name, each.value.principal): true
+      error_message = <<-EOT
+      Databricks Account group mentioned in 'acl' parameter of 'secret_scope' variable doesn't exists or wasn't assigned to Workspace.
+      Please make sure provided group exist within Databricks Account and then check if it assigned to target Workspace (look for 'iam_account_groups' variable).
+      These are valid Account Groups on Workspace: ${join(", ", var.iam_account_groups[*].group_name)}
+      EOT
     }
   }
 }
