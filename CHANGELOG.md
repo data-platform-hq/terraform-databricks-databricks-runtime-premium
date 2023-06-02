@@ -1,3 +1,13 @@
+## [2.1.1](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.1.0...v2.1.1) (2023-06-02)
+
+
+### Bug Fixes
+
+* create precondition ([fcc6271](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/fcc627193beacd7a44603895868c168f1a21884e))
+* fix condition ([6c5c424](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/6c5c42440ae7009ef69139123a24a1501c963f21))
+* fmt ([aedda3b](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/aedda3b9d5a5bf6902f0437de5d0cfbf776f02e9))
+* updated preconditions ([713ffa4](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/713ffa4c68ec41418f727131e49f3927a0858d63))
+
 # [2.1.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.0.5...v2.1.0) (2023-05-26)
 
 
