@@ -79,7 +79,7 @@ resource "databricks_secret_acl" "this" {
 
   lifecycle {
     precondition {
-      condition     = length(var.iam_account_groups) != 0 ? contains(var.iam_account_groups[*].group_name, each.value.principal): true
+      condition     = length(var.iam_account_groups) != 0 ? contains(var.iam_account_groups[*].group_name, each.value.principal) : true
       error_message = <<-EOT
       Databricks Account group mentioned in 'acl' parameter of 'secret_scope' variable doesn't exists or wasn't assigned to Workspace.
       Please make sure provided group exist within Databricks Account and then check if it assigned to target Workspace (look for 'iam_account_groups' variable).
