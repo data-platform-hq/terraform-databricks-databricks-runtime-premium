@@ -76,16 +76,6 @@ variable "sql_endpoint" {
   default     = []
 }
 
-variable "external_metastore_id" {
-  type        = string
-  description = "Unity Catalog Metastore Id that is located in separate environment. Provide this value to associate Databricks Workspace with target Metastore"
-  default     = ""
-  validation {
-    condition     = anytrue([length(var.external_metastore_id) == 36, length(var.external_metastore_id) == 0])
-    error_message = "UUID has to be either in nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn format or empty string"
-  }
-}
-
 variable "sp_client_id_secret_name" {
   type        = string
   description = "The name of Azure Key Vault secret that contains ClientID of Service Principal to access in Azure Key Vault"
