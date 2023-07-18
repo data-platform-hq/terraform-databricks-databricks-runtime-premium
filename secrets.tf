@@ -46,10 +46,10 @@ resource "databricks_secret" "this" {
 
 # Azure Key Vault-backed Scope
 resource "azurerm_key_vault_access_policy" "databricks" {
-  for_each = {
+  for_each = var.create_databricks_access_policy_to_key_vault ? {
     for param in var.key_vault_secret_scope : (param.name) => param
     if length(param.name) != 0
-  }
+  } : {}
 
   key_vault_id = each.value.key_vault_id
   object_id    = "9b38785a-6e08-4087-a0c4-20634343f21f" # Global 'AzureDatabricks' SP object id

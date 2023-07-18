@@ -118,6 +118,12 @@ variable "key_vault_id" {
 }
 
 # Azure Key Vault-backed Secret Scope
+variable "create_databricks_access_policy_to_key_vault" {
+  type        = bool
+  description = "Boolean flag to enable creation of Key Vault Access Policy for Databricks Global Service Principal."
+  default     = true
+}
+
 variable "key_vault_secret_scope" {
   type = list(object({
     name         = optional(string)
