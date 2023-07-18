@@ -1,3 +1,11 @@
+## [2.1.2](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.1.1...v2.1.2) (2023-07-18)
+
+
+### Bug Fixes
+
+* added condition for key vault access policy creation ([08e64a1](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/08e64a172ed548a5e5b9a90f712c7c54e772d6cf))
+* removed duplicates ([03d35c9](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/03d35c958168cde5d2f7bbce29a329701536753e))
+
 ## [2.1.1](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.1.0...v2.1.1) (2023-06-02)
 
 
