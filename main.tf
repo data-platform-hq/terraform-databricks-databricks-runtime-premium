@@ -4,11 +4,15 @@ locals {
 }
 
 data "azurerm_key_vault_secret" "sp_client_id" {
+  count = var.mountpoints == {} ? 0 : 1
+
   name         = var.sp_client_id_secret_name
   key_vault_id = var.key_vault_id
 }
 
 data "azurerm_key_vault_secret" "sp_key" {
+  count = var.mountpoints == {} ? 0 : 1
+
   name         = var.sp_key_secret_name
   key_vault_id = var.key_vault_id
 }

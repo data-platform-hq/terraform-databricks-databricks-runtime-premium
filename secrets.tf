@@ -1,7 +1,7 @@
 locals {
-  sp_secrets = {
-    (var.sp_client_id_secret_name) = { value = data.azurerm_key_vault_secret.sp_client_id.value }
-    (var.sp_key_secret_name)       = { value = data.azurerm_key_vault_secret.sp_key.value }
+  sp_secrets = var.mountpoints == {} ? {} : {
+    (var.sp_client_id_secret_name) = { value = data.azurerm_key_vault_secret.sp_client_id[0].value }
+    (var.sp_key_secret_name)       = { value = data.azurerm_key_vault_secret.sp_key[0].value }
   }
 
   secrets_objects_list = flatten([for param in var.secret_scope : [
