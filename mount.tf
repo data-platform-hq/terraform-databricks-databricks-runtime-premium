@@ -1,5 +1,5 @@
 resource "databricks_mount" "adls" {
-  for_each = var.mountpoints
+  for_each = var.mount_enabled ? var.mountpoints : {}
 
   name       = each.key
   cluster_id = var.mount_cluster_name != null ? databricks_cluster.cluster[var.mount_cluster_name].id : null

@@ -209,3 +209,9 @@ variable "mount_cluster_name" {
   description = "Name of the cluster that will be used during storage mounting. If mount_adls_passthrough == true, cluster should also have option cluster_conf_passthrought == true"
   default     = null
 }
+
+variable "mount_enabled" {
+  type        = bool
+  description = "Boolean flag to enable ADLS mount to Databricks"
+  default     = true
+}
