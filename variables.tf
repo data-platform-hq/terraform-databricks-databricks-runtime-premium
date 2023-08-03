@@ -79,13 +79,13 @@ variable "sql_endpoint" {
 variable "sp_client_id_secret_name" {
   type        = string
   description = "The name of Azure Key Vault secret that contains ClientID of Service Principal to access in Azure Key Vault"
-  default = ""
+  default     = ""
 }
 
 variable "sp_key_secret_name" {
   type        = string
   description = "The name of Azure Key Vault secret that contains client secret of Service Principal to access in Azure Key Vault"
-  default = ""
+  default     = ""
 }
 
 # Secret Scope variables
