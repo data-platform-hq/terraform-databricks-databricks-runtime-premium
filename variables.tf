@@ -79,11 +79,13 @@ variable "sql_endpoint" {
 variable "sp_client_id_secret_name" {
   type        = string
   description = "The name of Azure Key Vault secret that contains ClientID of Service Principal to access in Azure Key Vault"
+  default = ""
 }
 
 variable "sp_key_secret_name" {
   type        = string
   description = "The name of Azure Key Vault secret that contains client secret of Service Principal to access in Azure Key Vault"
+  default = ""
 }
 
 # Secret Scope variables
@@ -213,5 +215,5 @@ variable "mount_cluster_name" {
 variable "mount_enabled" {
   type        = bool
   description = "Boolean flag to enable ADLS mount to Databricks"
-  default     = true
+  default     = false
 }
