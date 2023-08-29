@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.1.2...v2.2.0) (2023-08-29)
+
+
+### Features
+
+* single user cluster mode ([fb890ac](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/fb890ac6ee885203771ed503e35b75a28c633d93))
+
 ## [2.1.2](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.1.1...v2.1.2) (2023-07-18)
 
 
