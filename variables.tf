@@ -183,6 +183,7 @@ variable "clusters" {
     first_on_demand              = optional(number, 0)
     spot_bid_max_price           = optional(number, 1)
     cluster_log_conf_destination = optional(string, null)
+    single_user_name             = optional(string, null)
     permissions = optional(set(object({
       group_name       = string
       permission_level = string
