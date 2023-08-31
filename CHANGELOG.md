@@ -1,3 +1,18 @@
+# [2.3.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.2.0...v2.3.0) (2023-08-31)
+
+
+### Bug Fixes
+
+* fmt ([cc247f0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/cc247f049bc675e1349e1b19295776075632bb44))
+
+
+### Features
+
+* added bool flag ([7336b73](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/7336b736b5fc747a06c0bb6bf06250eb12bc8c88))
+* added secret names default values and made mount disabled by default ([d08ae38](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/d08ae387288c155f50f700970c3ed80e1861189f))
+* mount feature optionality ([a5a02b5](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/a5a02b50368b9a50bb93ca4edc6569b74caaa36e))
+* optional resources ([ac8d4a9](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/ac8d4a9c1a27d00759c845075323b03cdf251fd2))
+
 # [2.2.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.1.2...v2.2.0) (2023-08-29)
 
 
