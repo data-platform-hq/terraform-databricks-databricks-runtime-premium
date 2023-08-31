@@ -1,5 +1,5 @@
 resource "databricks_mount" "adls" {
-  for_each = var.mountpoints
+  for_each = var.mount_enabled ? var.mountpoints : {}
 
   name       = each.key
   cluster_id = var.mount_cluster_name != null ? databricks_cluster.cluster[var.mount_cluster_name].id : null
@@ -10,11 +10,9 @@ resource "databricks_mount" "adls" {
     } : {
     "fs.azure.account.auth.type" : "OAuth",
     "fs.azure.account.oauth.provider.type" : "org.apache.hadoop.fs.azurebfs.oauth2.ClientCredsTokenProvider",
-    "fs.azure.account.oauth2.client.id" : data.azurerm_key_vault_secret.sp_client_id.value,
-    "fs.azure.account.oauth2.client.secret" : databricks_secret.main[data.azurerm_key_vault_secret.sp_key.name].config_reference,
-    "fs.azure.account.oauth2.client.endpoint" : "https://login.microsoftonline.com/${data.azurerm_key_vault_secret.tenant_id.value}/oauth2/token",
+    "fs.azure.account.oauth2.client.id" : var.mount_service_principal_client_id,
+    "fs.azure.account.oauth2.client.secret" : databricks_secret.main["mount-sp-secret"].config_reference,
+    "fs.azure.account.oauth2.client.endpoint" : "https://login.microsoftonline.com/${var.mount_service_principal_tenant_id}/oauth2/token",
     "fs.azure.createRemoteFileSystemDuringInitialization" : "false",
-    "spark.databricks.sqldw.jdbc.service.principal.client.id" : data.azurerm_key_vault_secret.sp_client_id.value,
-    "spark.databricks.sqldw.jdbc.service.principal.client.secret" : databricks_secret.main[data.azurerm_key_vault_secret.sp_key.name].config_reference
   }
 }

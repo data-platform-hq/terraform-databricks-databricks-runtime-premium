@@ -76,16 +76,6 @@ variable "sql_endpoint" {
   default     = []
 }
 
-variable "sp_client_id_secret_name" {
-  type        = string
-  description = "The name of Azure Key Vault secret that contains ClientID of Service Principal to access in Azure Key Vault"
-}
-
-variable "sp_key_secret_name" {
-  type        = string
-  description = "The name of Azure Key Vault secret that contains client secret of Service Principal to access in Azure Key Vault"
-}
-
 # Secret Scope variables
 variable "secret_scope" {
   type = list(object({
@@ -112,12 +102,13 @@ EOT
   }]
 }
 
-variable "key_vault_id" {
+# Azure Key Vault-backed Secret Scope
+variable "global_databricks_sp_object_id" {
   type        = string
-  description = "ID of the Key Vault instance where the Secret resides"
+  description = "Global 'AzureDatabricks' SP object id. Used to create Key Vault Access Policy for Secret Scope"
+  default     = "9b38785a-6e08-4087-a0c4-20634343f21f"
 }
 
-# Azure Key Vault-backed Secret Scope
 variable "create_databricks_access_policy_to_key_vault" {
   type        = bool
   description = "Boolean flag to enable creation of Key Vault Access Policy for Databricks Global Service Principal."
@@ -126,26 +117,13 @@ variable "create_databricks_access_policy_to_key_vault" {
 
 variable "key_vault_secret_scope" {
   type = list(object({
-    name         = optional(string)
-    key_vault_id = optional(string)
-    dns_name     = optional(string)
+    name         = string
+    key_vault_id = string
+    dns_name     = string
+    tenant_id    = string
   }))
   description = "Object with Azure Key Vault parameters required for creation of Azure-backed Databricks Secret scope"
   default     = []
-}
-
-variable "tenant_id_secret_name" {
-  type        = string
-  description = "The name of Azure Key Vault secret that contains tenant ID secret of Service Principal to access in Azure Key Vault"
-}
-
-variable "mountpoints" {
-  type = map(object({
-    storage_account_name = string
-    container_name       = string
-  }))
-  description = "Mountpoints for databricks"
-  default     = {}
 }
 
 variable "custom_cluster_policies" {
@@ -199,9 +177,43 @@ variable "pat_token_lifetime_seconds" {
   default     = 315569520
 }
 
+# Mount ADLS Gen2 Filesystem
+variable "mount_enabled" {
+  type        = bool
+  description = "Boolean flag that determines whether mount point for storage account filesystem is created"
+  default     = false
+}
+
+variable "mount_service_principal_client_id" {
+  type        = string
+  description = "Application(client) Id of Service Principal used to perform storage account mounting"
+  default     = null
+}
+variable "mount_service_principal_secret" {
+  type        = string
+  description = "Service Principal Secret used to perform storage account mounting"
+  default     = null
+  sensitive   = true
+}
+
+variable "mount_service_principal_tenant_id" {
+  type        = string
+  description = "Service Principal tenant id used to perform storage account mounting"
+  default     = null
+}
+
+variable "mountpoints" {
+  type = map(object({
+    storage_account_name = string
+    container_name       = string
+  }))
+  description = "Mountpoints for databricks"
+  default     = {}
+}
+
 variable "mount_adls_passthrough" {
   type        = bool
-  description = "Boolean flag to use mount options for credentals passthrough. Should be used with mount_cluster_name, specified cluster should have option cluster_conf_passthrought == true"
+  description = "Boolean flag to use mount options for credentials passthrough. Should be used with mount_cluster_name, specified cluster should have option cluster_conf_passthrought == true"
   default     = false
 }
 

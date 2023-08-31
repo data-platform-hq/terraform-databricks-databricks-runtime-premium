@@ -3,21 +3,6 @@ locals {
   suffix   = length(var.suffix) == 0 ? "" : "-${var.suffix}"
 }
 
-data "azurerm_key_vault_secret" "sp_client_id" {
-  name         = var.sp_client_id_secret_name
-  key_vault_id = var.key_vault_id
-}
-
-data "azurerm_key_vault_secret" "sp_key" {
-  name         = var.sp_key_secret_name
-  key_vault_id = var.key_vault_id
-}
-
-data "azurerm_key_vault_secret" "tenant_id" {
-  name         = var.tenant_id_secret_name
-  key_vault_id = var.key_vault_id
-}
-
 resource "databricks_workspace_conf" "this" {
   count = local.ip_rules == null ? 0 : 1
 
