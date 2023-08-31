@@ -13,6 +13,7 @@ resource "databricks_cluster" "cluster" {
   data_security_mode      = each.value.cluster_conf_passthrought ? null : each.value.data_security_mode
   node_type_id            = each.value.node_type_id
   autotermination_minutes = each.value.autotermination_minutes
+  single_user_name        = each.value.single_user_name
 
   autoscale {
     min_workers = each.value.min_workers
