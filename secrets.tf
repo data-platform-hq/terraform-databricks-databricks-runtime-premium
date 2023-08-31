@@ -1,8 +1,8 @@
 locals {
-  sp_secrets = var.mount_enabled ? {
-    (var.sp_client_id_secret_name) = { value = data.azurerm_key_vault_secret.sp_client_id[0].value }
-    (var.sp_key_secret_name)       = { value = data.azurerm_key_vault_secret.sp_key[0].value }
-  } : {}
+  mount_sp_secrets = {
+    mount-sp-client-id = { value = var.mount_service_principal_client_id }
+    mount-sp-secret    = { value = var.mount_service_principal_secret }
+  }
 
   secrets_objects_list = flatten([for param in var.secret_scope : [
     for secret in param.secrets : {
@@ -13,16 +13,25 @@ locals {
 
 # Secret Scope with SP secrets for mounting Azure Data Lake Storage
 resource "databricks_secret_scope" "main" {
+  count = var.mount_enabled ? 1 : 0
+
   name                     = "main"
   initial_manage_principal = null
 }
 
 resource "databricks_secret" "main" {
-  for_each = local.sp_secrets
+  for_each = var.mount_enabled ? local.mount_sp_secrets : {}
 
   key          = each.key
   string_value = each.value["value"]
-  scope        = databricks_secret_scope.main.id
+  scope        = databricks_secret_scope.main[0].id
+
+  lifecycle {
+    precondition {
+      condition     = var.mount_enabled ? length(compact([var.mount_service_principal_client_id, var.mount_service_principal_secret, var.mount_service_principal_tenant_id])) == 3 : true
+      error_message = "To mount ADLS Storage, please provide prerequisite Service Principal values - 'mount_service_principal_object_id', 'mount_service_principal_secret', 'mount_service_principal_tenant_id'."
+    }
+  }
 }
 
 # Custom additional Databricks Secret Scope
@@ -52,8 +61,8 @@ resource "azurerm_key_vault_access_policy" "databricks" {
   } : {}
 
   key_vault_id = each.value.key_vault_id
-  object_id    = "9b38785a-6e08-4087-a0c4-20634343f21f" # Global 'AzureDatabricks' SP object id
-  tenant_id    = data.azurerm_key_vault_secret.tenant_id.value
+  object_id    = var.global_databricks_sp_object_id
+  tenant_id    = each.value.tenant_id
 
   secret_permissions = [
     "Get",
