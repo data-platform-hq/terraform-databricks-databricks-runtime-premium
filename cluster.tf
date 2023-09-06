@@ -35,6 +35,25 @@ resource "databricks_cluster" "cluster" {
     }
   }
 
+  dynamic "library" {
+    for_each = toset(each.value.pypi_library_repository)
+    content {
+      pypi {
+        package = library.value
+      }
+    }
+  }
+
+  dynamic "library" {
+    for_each = each.value.maven_library_repository
+    content {
+      maven {
+        coordinates = library.value.coordinates
+        exclusions  = library.value.exclusions
+      }
+    }
+  }
+
   lifecycle {
     ignore_changes = [
       state

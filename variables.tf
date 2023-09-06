@@ -166,6 +166,11 @@ variable "clusters" {
       group_name       = string
       permission_level = string
     })), [])
+    pypi_library_repository = optional(set(string), [])
+    maven_library_repository = optional(set(object({
+      coordinates = string
+      exclusions  = set(string)
+    })), [])
   }))
   description = "Set of objects with parameters to configure Databricks clusters and assign permissions to it for certain custom groups"
   default     = []
