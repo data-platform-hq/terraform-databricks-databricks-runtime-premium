@@ -36,7 +36,7 @@ resource "databricks_cluster" "cluster" {
   }
 
   dynamic "library" {
-    for_each = toset(each.value.pypi_library_repository)
+    for_each = each.value.pypi_library_repository
     content {
       pypi {
         package = library.value
