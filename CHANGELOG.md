@@ -1,3 +1,15 @@
+# [2.4.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.3.0...v2.4.0) (2023-09-07)
+
+
+### Bug Fixes
+
+* remove toset function ([ecd3309](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/ecd33092dcdfefabe05370053a24635c36ee7e4c))
+
+
+### Features
+
+* library ([d03bed3](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/d03bed3765e2276adf7e49d4bec1836e4120e28a))
+
 # [2.3.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.2.0...v2.3.0) (2023-08-31)
 
 
