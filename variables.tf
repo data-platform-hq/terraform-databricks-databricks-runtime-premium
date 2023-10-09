@@ -227,3 +227,30 @@ variable "mount_cluster_name" {
   description = "Name of the cluster that will be used during storage mounting. If mount_adls_passthrough == true, cluster should also have option cluster_conf_passthrought == true"
   default     = null
 }
+
+variable "repository_credential" {
+  sensitive = false
+  type = list(object({
+    personal_access_token = optional(string)
+    git_username          = optional(string)
+    git_provider          = optional(string)
+    force                 = optional(bool)
+  }))
+  description = "Repository credential configuration."
+  default = [{
+    force = true
+  }]
+}
+
+variable "repository_url" {
+  sensitive = false
+  type = list(object({
+    url    = string
+    branch = optional(string)
+    path   = optional(string)
+  }))
+  description = "Repository url configuration"
+  default = [{
+    url = null
+  }]
+}
