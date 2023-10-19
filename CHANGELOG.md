@@ -1,3 +1,10 @@
+## [2.4.1](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.4.0...v2.4.1) (2023-10-19)
+
+
+### Bug Fixes
+
+* ignore group_id changes ([8a40f39](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/8a40f39beac1ee5a72d34a8325d3d41d639db78c))
+
 # [2.4.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.3.0...v2.4.0) (2023-09-07)
 
 
