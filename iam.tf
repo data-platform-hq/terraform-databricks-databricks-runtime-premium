@@ -96,4 +96,8 @@ resource "databricks_entitlements" "this" {
   workspace_access           = true
 
   depends_on = [databricks_group_member.this]
+
+  lifecycle {
+    ignore_changes = [group_id]
+  }
 }
