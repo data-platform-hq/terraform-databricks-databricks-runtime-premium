@@ -35,6 +35,33 @@ resource "databricks_cluster" "cluster" {
     }
   }
 
+  dynamic "init_scripts" {
+    for_each = each.value.init_scripts_workspace != null ? each.value.init_scripts_workspace : []
+    content {
+      workspace {
+        destination = init_scripts.value
+      }
+    }
+  }
+
+  dynamic "init_scripts" {
+    for_each = each.value.init_scripts_volumes != null ? each.value.init_scripts_volumes : []
+    content {
+      volumes {
+        destination = init_scripts.value
+      }
+    }
+  }
+
+  dynamic "init_scripts" {
+    for_each = each.value.init_scripts_dbfs != null ? each.value.init_scripts_dbfs : []
+    content {
+      dbfs {
+        destination = init_scripts.value
+      }
+    }
+  }
+
   dynamic "library" {
     for_each = each.value.pypi_library_repository
     content {

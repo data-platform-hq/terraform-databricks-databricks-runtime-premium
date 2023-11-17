@@ -161,6 +161,9 @@ variable "clusters" {
     first_on_demand              = optional(number, 0)
     spot_bid_max_price           = optional(number, 1)
     cluster_log_conf_destination = optional(string, null)
+    init_scripts_workspace       = optional(set(string), [])
+    init_scripts_volumes         = optional(set(string), [])
+    init_scripts_dbfs            = optional(set(string), [])
     single_user_name             = optional(string, null)
     permissions = optional(set(object({
       group_name       = string
