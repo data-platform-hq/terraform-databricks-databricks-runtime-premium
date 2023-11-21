@@ -62,6 +62,15 @@ resource "databricks_cluster" "cluster" {
     }
   }
 
+  dynamic "init_scripts" {
+    for_each = each.value.init_scripts_abfss != null ? each.value.init_scripts_abfss : []
+    content {
+      abfss {
+        destination = init_scripts.value
+      }
+    }
+  }
+
   dynamic "library" {
     for_each = each.value.pypi_library_repository
     content {

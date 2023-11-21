@@ -164,6 +164,7 @@ variable "clusters" {
     init_scripts_workspace       = optional(set(string), [])
     init_scripts_volumes         = optional(set(string), [])
     init_scripts_dbfs            = optional(set(string), [])
+    init_scripts_abfss           = optional(set(string), [])
     single_user_name             = optional(string, null)
     permissions = optional(set(object({
       group_name       = string
