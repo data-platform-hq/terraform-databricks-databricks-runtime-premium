@@ -1,3 +1,10 @@
+# [2.5.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.4.1...v2.5.0) (2023-11-21)
+
+
+### Features
+
+* Merge pull request [#39](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/issues/39) from data-platform-hq/feat/init-scripts-config-block ([aa1d444](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/aa1d444de2c361c1a9fcbf017f0e9cad85ff6edc))
+
 ## [2.4.1](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.4.0...v2.4.1) (2023-10-19)
 
 
