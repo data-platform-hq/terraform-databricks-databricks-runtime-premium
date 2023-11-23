@@ -1,3 +1,10 @@
+## [2.5.1](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.5.0...v2.5.1) (2023-11-23)
+
+
+### Bug Fixes
+
+* updated default databrick runtime version ([d0a2935](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/d0a29353ba0e5f35958a34326ef5b99378ca5b7a))
+
 # [2.5.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.4.1...v2.5.0) (2023-11-21)
 
 
