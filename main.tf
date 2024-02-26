@@ -51,3 +51,9 @@ resource "databricks_sql_endpoint" "this" {
   }
   depends_on = [databricks_sql_global_config.this]
 }
+
+resource "databricks_system_schema" "this" {
+  for_each = var.system_schemas_enabled ? var.system_schemas : toset([])
+
+  schema = each.value
+}
