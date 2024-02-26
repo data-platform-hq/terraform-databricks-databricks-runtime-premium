@@ -1,3 +1,11 @@
+## [2.5.2](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.5.1...v2.5.2) (2024-02-26)
+
+
+### Bug Fixes
+
+* replaced pre-commit repo docs creation/update by GH Actions ([01bcb6f](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/01bcb6ff9b0465acbf34fbf9e8a6bc9d020f089f))
+* support system schemas ([f9e7efa](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/f9e7efaebdb321d8ced15e00a7c96c0fcfcb96fb))
+
 ## [2.5.1](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.5.0...v2.5.1) (2023-11-23)
 
 
