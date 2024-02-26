@@ -231,3 +231,15 @@ variable "mount_cluster_name" {
   description = "Name of the cluster that will be used during storage mounting. If mount_adls_passthrough == true, cluster should also have option cluster_conf_passthrought == true"
   default     = null
 }
+
+variable "system_schemas" {
+  type        = set(string)
+  description = "Set of strings with all possible System Schema names"
+  default     = ["access", "billing", "compute", "marketplace", "storage"]
+}
+
+variable "system_schemas_enabled" {
+  type        = bool
+  description = "System Schemas only works with assigned Unity Catalog Metastore. Boolean flag to enabled this feature"
+  default     = false
+}
