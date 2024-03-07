@@ -25,7 +25,7 @@ resource "databricks_cluster" "cluster" {
   node_type_id            = each.value.node_type_id
   autotermination_minutes = each.value.autotermination_minutes
   single_user_name        = each.value.single_user_name
-  custom_tags             = each.value.single_node_enable ? each.value.custom_tags : null
+  custom_tags             = merge(each.value.single_node_enable ? { "ResourceClass" = "SingleNode" } : {}, each.value.custom_tags)
 
   dynamic "azure_attributes" {
     for_each = each.value.single_node_enable == true ? [] : [1]
