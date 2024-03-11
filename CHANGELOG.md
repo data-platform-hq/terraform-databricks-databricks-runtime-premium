@@ -1,3 +1,13 @@
+## [2.5.3](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.5.2...v2.5.3) (2024-03-11)
+
+
+### Bug Fixes
+
+* added security KICS scan action ([170d131](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/170d13122e2d7871c0624e2d91ba67c393cf94a4))
+* changed cluster  attribute ([2936d1d](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/2936d1de06690ea78107ad0bb4a1f68bf632c3c8))
+* changed tags ([dff3af8](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/dff3af8455ff07b08a7cc7adbf156fef4b6ef87f))
+* support single node ([f53bd97](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/f53bd9730bd04f7290013b6818fe4f41b1f7409f))
+
 ## [2.5.2](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.5.1...v2.5.2) (2024-02-26)
 
 
