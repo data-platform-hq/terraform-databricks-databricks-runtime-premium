@@ -27,17 +27,14 @@ resource "databricks_cluster" "cluster" {
   single_user_name        = each.value.single_user_name
   custom_tags             = merge(each.value.single_node_enable ? { "ResourceClass" = "SingleNode" } : {}, each.value.custom_tags)
 
-  dynamic "azure_attributes" {
-    for_each = each.value.single_node_enable == true ? [] : [1]
-    content {
-      availability       = each.value.availability
-      first_on_demand    = each.value.first_on_demand
-      spot_bid_max_price = each.value.spot_bid_max_price
-    }
+  azure_attributes {
+    availability       = each.value.availability
+    first_on_demand    = each.value.first_on_demand
+    spot_bid_max_price = each.value.spot_bid_max_price
   }
 
   dynamic "autoscale" {
-    for_each = each.value.single_node_enable == true ? [] : [1]
+    for_each = each.value.single_node_enable ? [] : [1]
     content {
       min_workers = each.value.min_workers
       max_workers = each.value.max_workers
