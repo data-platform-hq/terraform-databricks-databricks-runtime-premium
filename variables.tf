@@ -166,6 +166,8 @@ variable "clusters" {
     init_scripts_dbfs            = optional(set(string), [])
     init_scripts_abfss           = optional(set(string), [])
     single_user_name             = optional(string, null)
+    single_node_enable           = optional(bool, false)
+    custom_tags                  = optional(map(string), {})
     permissions = optional(set(object({
       group_name       = string
       permission_level = string
