@@ -27,12 +27,6 @@ resource "databricks_ip_access_list" "this" {
 }
 
 # SQL Endpoint
-resource "databricks_sql_global_config" "this" {
-  count = anytrue(var.sql_endpoint[*].enable_serverless_compute) ? 1 : 0
-
-  enable_serverless_compute = true
-}
-
 resource "databricks_sql_endpoint" "this" {
   for_each = { for endpoint in var.sql_endpoint : (endpoint.name) => endpoint }
 
@@ -49,7 +43,6 @@ resource "databricks_sql_endpoint" "this" {
   lifecycle {
     ignore_changes = [state, num_clusters]
   }
-  depends_on = [databricks_sql_global_config.this]
 }
 
 resource "databricks_system_schema" "this" {
