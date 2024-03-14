@@ -1,3 +1,10 @@
+## [2.5.4](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.5.3...v2.5.4) (2024-03-14)
+
+
+### Bug Fixes
+
+* sql serverless config; clusters lifecycle rule removed ([bb05101](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/bb051014f318682c9d7d76e574ee27bdc4b1d6bf))
+
 ## [2.5.3](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.5.2...v2.5.3) (2024-03-11)
 
 
