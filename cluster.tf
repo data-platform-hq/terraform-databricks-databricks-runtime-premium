@@ -104,12 +104,6 @@ resource "databricks_cluster" "cluster" {
       }
     }
   }
-
-  lifecycle {
-    ignore_changes = [
-      state
-    ]
-  }
 }
 
 resource "databricks_cluster_policy" "this" {
