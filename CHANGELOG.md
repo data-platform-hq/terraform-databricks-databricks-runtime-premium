@@ -1,3 +1,10 @@
+# [2.6.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.5.4...v2.6.0) (2024-09-10)
+
+
+### Features
+
+* upgrade to AzureRM v4 ([56e1eab](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/56e1eab8e58c8fae2b486d35aa06a5757f899ab6))
+
 ## [2.5.4](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.5.3...v2.5.4) (2024-03-14)
 
 
