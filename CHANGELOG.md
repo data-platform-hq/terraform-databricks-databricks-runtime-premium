@@ -1,3 +1,10 @@
+# [2.7.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.6.0...v2.7.0) (2024-09-17)
+
+
+### Features
+
+* cluster policies override ([7eaaa06](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/7eaaa0670e7c8f271544dcf999ca3d3459120611))
+
 # [2.6.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.5.4...v2.6.0) (2024-09-10)
 
 
