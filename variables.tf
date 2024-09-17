@@ -245,3 +245,22 @@ variable "system_schemas_enabled" {
   description = "System Schemas only works with assigned Unity Catalog Metastore. Boolean flag to enabled this feature"
   default     = false
 }
+
+variable "default_cluster_policies_override" {
+  type = list(object({
+    name       = string
+    family_id  = string
+    definition = any
+  }))
+  description = <<-EOT
+Provides an ability to override default cluster policy
+name - name of cluster policy to override
+family_id - family id of corresponding policy
+definition - JSON document expressed in Databricks Policy Definition Language. No need to call 'jsonencode()' function on it when providing a value;
+EOT
+  default = [{
+    name       = null
+    family_id  = null
+    definition = null
+  }]
+}

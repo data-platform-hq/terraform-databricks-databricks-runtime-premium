@@ -115,3 +115,14 @@ resource "databricks_cluster_policy" "this" {
   name       = each.key
   definition = jsonencode(each.value)
 }
+
+resource "databricks_cluster_policy" "overrides" {
+  for_each = {
+    for param in var.default_cluster_policies_override : (param.name) => param
+    if param.definition != null
+  }
+
+  policy_family_id                   = each.value.family_id
+  policy_family_definition_overrides = jsonencode(each.value.definition)
+  name                               = each.key
+}
