@@ -1,3 +1,10 @@
+# [2.8.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.7.0...v2.8.0) (2024-09-25)
+
+
+### Features
+
+* resource to grant CAN_USE permissions to groups ([a869767](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/commit/a8697675a30aa05cefec436b7e90dddfe93e3351))
+
 # [2.7.0](https://github.com/data-platform-hq/terraform-databricks-databricks-runtime-premium/compare/v2.6.0...v2.7.0) (2024-09-17)
 
 
