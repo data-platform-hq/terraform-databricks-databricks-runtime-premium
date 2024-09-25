@@ -116,6 +116,23 @@ resource "databricks_cluster_policy" "this" {
   definition = jsonencode(each.value)
 }
 
+resource "databricks_permissions" "this" {
+  for_each = {
+    for param in var.custom_cluster_policies : (param.name) => param.can_use
+    if param.can_use != null
+  }
+
+  cluster_policy_id = databricks_cluster_policy.this[each.key].id
+
+  dynamic "access_control" {
+    for_each = each.value
+    content {
+      group_name       = access_control.value
+      permission_level = "CAN_USE"
+    }
+  }
+}
+
 resource "databricks_cluster_policy" "overrides" {
   for_each = {
     for param in var.default_cluster_policies_override : (param.name) => param
